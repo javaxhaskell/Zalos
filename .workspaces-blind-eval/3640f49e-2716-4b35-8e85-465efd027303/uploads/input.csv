@@ -1,0 +1,4 @@
+expense_id,employee_id,expense_date,category,amount,description
+EXP-1,EMP-01,2026-01-10,Travel,120.00,Client taxi
+EXP-2,EMP-02,2026-01-11,Meals,85.50,Team lunch
+EXP-3,EMP-01,2026-01-12,Travel,450.00,Flight without receipt

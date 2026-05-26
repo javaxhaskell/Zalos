@@ -1,0 +1,8 @@
+expense_id,employee_id,expense_date,category,amount,currency,merchant,approval_status,receipt_attached,policy_limit,notes
+EXP-001,EMP-001,2026-04-01,Travel,120.00,USD,City Taxi,approved,true,100.00,client visit taxi
+EXP-002,EMP-002,2026-04-02,Meals,150.00,USD,North Cafe,approved,false,200.00,dinner receipt not uploaded
+EXP-003,EMP-003,2026-04-03,Office,42.00,USD,OfficeMart,approved,true,100.00,printer paper
+EXP-004,EMP-004,2026-04-04,Software,60.00,USD,SaaS Co,pending,true,100.00,monthly subscription
+EXP-005,EMP-005,2026-04-05,Travel,35.00,USD,RailCo,approved,true,100.00,personal weekend travel
+EXP-006,EMP-006,2026-04-06,Meals,80.00,USD,Bistro,approved,true,100.00,team lunch
+EXP-007,EMP-007,2026-04-07,Travel,500.00,USD,Airline,rejected,false,400.00,cash advance duplicate claim

@@ -1,0 +1,22 @@
+{
+  "session_id": "3bb42792-0bbe-4a74-aeb0-b59d3ad46dfe",
+  "workflow_type": "expense_exception_review",
+  "user_description": "Build an agent that reviews this expense export for finance exceptions. Expected outputs include outputs/output.csv, outputs/exceptions.csv, reports/validation_report.md, manifest.json, events.jsonl, SESSION_README.md, and archive.zip.",
+  "failure_pattern": "KeyError: 'id' in event_log._last_event_id",
+  "root_cause": "Generated agent overwrote events.jsonl with ad-hoc JSON records lacking WorkspaceEvent id/kind fields. Static safety scan did not forbid reserved-path writes.",
+  "events_jsonl_after_agent": [
+    "{\"event\": \"processing_started\", \"timestamp\": \"2026-05-25 12:52:34.392916\"}",
+    "{\"event\": \"processing_completed\", \"timestamp\": \"2026-05-25 12:52:34.392928\", \"rows\": 7, \"exceptions\": 5}"
+  ],
+  "unsafe_findings": {
+    "generated/agent.py": [
+      "write to reserved path: archive.zip",
+      "write to reserved path: events.jsonl",
+      "write to reserved path: manifest.json",
+      "write to reserved path: reports/model_authoring_summary.md",
+      "write to reserved path: SESSION_README.md"
+    ]
+  },
+  "generated_agent_source": "import json\nimport os\nfrom datetime import datetime\nimport zipfile\n\n\ndef main():\n    row_output = 'outputs/output.csv'\n    report_path = 'reports/validation_report.md'\n    os.makedirs('outputs', exist_ok=True)\n    os.makedirs('reports', exist_ok=True)\n    with open(row_output, 'w') as f:\n        f.write('expense_id,exception_flag\\nE001,no_exception\\n')\n    with open(report_path, 'w') as f:\n        f.write('# report\\n')\n\n    summary_path = 'reports/model_authoring_summary.md'\n    with open(summary_path, 'w') as f:\n        f.write('# Model Authoring Summary\\n')\n\n    manifest_path = 'manifest.json'\n    with open(manifest_path, 'w') as f:\n        json.dump({'workflow_type': 'expense_exception_review'}, f)\n\n    events_path = 'events.jsonl'\n    with open(events_path, 'w') as f:\n        f.write('{\"event\": \"processing_started\", \"timestamp\": \"' + str(datetime.utcnow()) + '\"}\\n')\n        f.write('{\"event\": \"processing_completed\", \"timestamp\": \"' + str(datetime.utcnow()) + '\", \"rows\": 1, \"exceptions\": 0}\\n')\n\n    readme_path = 'SESSION_README.md'\n    with open(readme_path, 'w') as f:\n        f.write('# Session README\\n')\n\n    archive_path = 'archive.zip'\n    with zipfile.ZipFile(archive_path, 'w', zipfile.ZIP_DEFLATED) as zf:\n        for filepath in [row_output, report_path, summary_path, manifest_path, events_path, readme_path]:\n            if os.path.exists(filepath):\n                zf.write(filepath)\n\n\nif __name__ == '__main__':\n    main()\n",
+  "expected_fix": "Static safety scan must reject writes to events.jsonl, manifest.json, SESSION_README.md, archive.zip, reports/model_authoring_summary.md, and other backend-managed paths before execution. Codegen and safety repair prompts must forbid orchestration/audit writes. event_log._last_event_id must raise EventLogError when the last line lacks id."
+}

@@ -1,0 +1,1 @@
+Categorise these social media posts by sentiment and engagement tier.

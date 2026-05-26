@@ -1,0 +1,127 @@
+{
+  "session_id": "22c0c771-4df3-45d9-a0b7-89430f35749f",
+  "source_workspace": ".workspaces/22c0c771-4df3-45d9-a0b7-89430f35749f",
+  "author_output_contract": {
+    "workflow_type": "vendor_payment_preparation",
+    "build_mode": "llm_custom",
+    "input_file": "uploads/vendor_payment_preparation.csv",
+    "input_format": "csv",
+    "row_level_output_file": "outputs/output.csv",
+    "exception_output_files": [
+      {
+        "path": "outputs/exceptions.csv",
+        "description": "Rows flagged for review during payment preparation",
+        "required_columns": [
+          "invoice_id",
+          "payment_status",
+          "exception_reason"
+        ]
+      }
+    ],
+    "input_columns": [
+      "vendor_id",
+      "vendor_name",
+      "invoice_id",
+      "invoice_date",
+      "due_date",
+      "amount",
+      "currency",
+      "payment_terms",
+      "approval_status",
+      "bank_account_present",
+      "tax_form_on_file",
+      "hold_flag",
+      "payment_method",
+      "category",
+      "notes"
+    ],
+    "output_columns": [
+      "vendor_id",
+      "vendor_name",
+      "invoice_id",
+      "invoice_date",
+      "due_date",
+      "amount",
+      "currency",
+      "payment_terms",
+      "approval_status",
+      "bank_account_present",
+      "tax_form_on_file",
+      "hold_flag",
+      "payment_method",
+      "category",
+      "notes",
+      "payment_status",
+      "payment_ready",
+      "exception_reason",
+      "recommended_payment_date"
+    ],
+    "required_output_columns": [
+      "payment_status",
+      "payment_ready",
+      "exception_reason",
+      "recommended_payment_date"
+    ],
+    "output_column_semantics": [
+      {
+        "name": "payment_status",
+        "description": "Payment status of the invoice",
+        "producer_kind": "classification",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Classified based on approval status, bank account presence, tax form presence, hold flag, and payment method.",
+        "fallback_value_semantics": "Unknown"
+      },
+      {
+        "name": "payment_ready",
+        "description": "Flag indicating if the invoice is ready for payment",
+        "producer_kind": "classification",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Classified based on approval status, bank account presence, tax form presence, hold flag, and payment method.",
+        "fallback_value_semantics": "False"
+      },
+      {
+        "name": "exception_reason",
+        "description": "Reason for any exceptions during payment preparation",
+        "producer_kind": "classification",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Classified based on approval status, bank account presence, tax form presence, hold flag, and payment method.",
+        "fallback_value_semantics": "None"
+      },
+      {
+        "name": "recommended_payment_date",
+        "description": "Recommended payment date for the invoice",
+        "producer_kind": "other",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Derived date value based on due date and payment terms.",
+        "fallback_value_semantics": "Use an explicit derived fallback date so the date field is never left blank."
+      }
+    ],
+    "exception_rules": [
+      {
+        "name": "not_approved",
+        "condition": "approval_status != 'approved'",
+        "reason": "Invoice not approved"
+      }
+    ]
+  },
+  "unsafe_findings": {
+    "generated/agent.py": [
+      "eval()"
+    ]
+  },
+  "generated_agent_source": "import csv\nimport json\nfrom datetime import date, timedelta\nfrom decimal import Decimal\n\n\ndef safe_decimal(value, default=None):\n    if value is None:\n        return default\n    return Decimal(str(value))\n\n\ndef parse_date(value, default=None):\n    if value is None:\n        return default\n    return date.fromisoformat(str(value))\n\n\ndef classify_payment_status(row):\n    if row['approval_status'] != 'approved':\n        return 'not_approved'\n    return 'approved'\n\n\ndef calculate_recommended_payment_date(row):\n    due_date = parse_date(row['due_date'])\n    payment_terms = int(str(row['payment_terms']).split()[0])\n    return due_date + timedelta(days=payment_terms)\n\n\ndef main(input_path, contract_path, row_output_path, report_path):\n    with open(contract_path, 'r', encoding='utf-8') as handle:\n        contract = json.load(handle)\n    exception_rules = {rule['name']: rule for rule in contract['exception_rules']}\n    with open(input_path, 'r', encoding='utf-8') as handle:\n        reader = csv.DictReader(handle)\n        for row in reader:\n            exception_reason = None\n            for _rule_name, rule in exception_rules.items():\n                if eval(rule['condition'], {'row': row}):\n                    exception_reason = rule['reason']\n                    break\n            _ = calculate_recommended_payment_date(row)\n            _ = classify_payment_status(row)\n            _ = exception_reason\n",
+  "safety_repair_candidate_source": "import csv\nimport json\nfrom datetime import date, timedelta\nfrom decimal import Decimal\n\n\ndef safe_decimal(value, default=None):\n    if value is None:\n        return default\n    return Decimal(str(value))\n\n\ndef parse_date(value, default=None):\n    if value is None:\n        return default\n    return date.fromisoformat(str(value))\n\n\ndef classify_payment_status(row):\n    if row['approval_status'] != 'approved':\n        return 'not_approved'\n    return 'approved'\n\n\ndef calculate_recommended_payment_date(row):\n    due_date = parse_date(row['due_date'])\n    payment_terms = int(str(row['payment_terms']).split()[0])\n    return due_date + timedelta(days=payment_terms)\n\n\ndef main(input_path, contract_path, row_output_path, report_path):\n    with open(contract_path, 'r', encoding='utf-8') as handle:\n        contract = json.load(handle)\n    exception_rules = {rule['name']: rule for rule in contract['exception_rules']}\n    with open(input_path, 'r', encoding='utf-8') as handle:\n        reader = csv.DictReader(handle)\n        for row in reader:\n            exception_reason = None\n            for _rule_name, rule in exception_rules.items():\n                if eval(rule['condition'], {'row': row}):\n                    exception_reason = rule['reason']\n                    break\n            _ = calculate_recommended_payment_date(row)\n            _ = classify_payment_status(row)\n            _ = exception_reason\n",
+  "safety_repair_output_tokens": 2048,
+  "safety_repair_hit_configured_max_tokens": true,
+  "safety_repair_response_malformed": true,
+  "safety_repair_json_repair_response_malformed": true,
+  "diagnosis": "The initial code-generation response introduced eval(rule['condition'], {'row': row}). Safety repair was triggered with the exact unsafe finding, but the safety repair response was truncated/malformed and still contained eval(). The follow-up JSON repair also failed to produce a valid safe patch."
+}

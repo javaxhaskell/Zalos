@@ -1,0 +1,29 @@
+{
+  "session_id": "f2f84399-cbe1-441c-bf30-9f437db38f65",
+  "user_description": "Build an agent that categorises this bank transaction file for finance review. Preserve every original input row and add category, rule_matched, rule_used, confidence_score, and review_required.",
+  "writer_target_path": "outputs/exceptions.csv",
+  "writer_fieldnames": [
+    "transaction_id",
+    "review_required",
+    "rule_matched"
+  ],
+  "exception_row_keys": [
+    "transaction_id",
+    "date",
+    "account",
+    "description",
+    "counterparty",
+    "amount",
+    "currency",
+    "reference",
+    "direction",
+    "category",
+    "rule_matched",
+    "rule_used",
+    "confidence_score",
+    "review_required"
+  ],
+  "execution_error": "Generated agent exited 1.\ncommand=python generated/agent.py --input uploads/bank_transaction_categorisation_demo.csv --contract generated/author_output_contract.json --row-output outputs/output.csv --report-path reports/summary_by_category.md\ninput_path=uploads/bank_transaction_categorisation_demo.csv\ncontract_path=generated/author_output_contract.json\nrow_output_path=outputs/output.csv\ncontract_input_modified=False\ncontract_json_valid_after_execution=True\nstdout: \nstderr: Traceback (most recent call last):\n  File \"/Users/arhamshuaib/Desktop/Zalos/.workspaces/f2f84399-cbe1-441c-bf30-9f437db38f65/generated/agent.py\", line 161, in <module>\n    main(args.input, args.contract, args.row_output, args.report_path)\n  File \"/Users/arhamshuaib/Desktop/Zalos/.workspaces/f2f84399-cbe1-441c-bf30-9f437db38f65/generated/agent.py\", line 150, in main\n    writer.writerows(exception_rows)\n  File \"/Users/arhamshuaib/anaconda3/lib/python3.13/csv.py\", line 229, in writerows\n    return self.writer.writerows(map(self._dict_to_list, rowdicts))\n  File \"/Users/arhamshuaib/anaconda3/lib/python3.13/csv.py\", line 221, in _dict_to_list\n    raise ValueError(\"dict contains fields not in fieldnames: \"\n                     + \", \".join([repr(x) for x in wrong_fields]))\nValueError: dict contains fields not in fieldnames: 'confidence_score', 'counterparty', 'amount', 'account', 'currency', 'description', 'rule_used', 'date', 'direction', 'category', 'reference'\n\nworkspace_artifact_tree:\noutputs/exceptions.csv\noutputs/output.csv\nreports/summary_by_category.md\ngenerated/agent.py",
+  "generated_agent_source": "import csv\nimport io\n\n\ndef process_transaction(row):\n    return {\n        \"transaction_id\": row[\"transaction_id\"],\n        \"date\": row[\"date\"],\n        \"account\": row[\"account\"],\n        \"description\": row[\"description\"],\n        \"counterparty\": row[\"counterparty\"],\n        \"amount\": row[\"amount\"],\n        \"currency\": row[\"currency\"],\n        \"reference\": row[\"reference\"],\n        \"direction\": row[\"direction\"],\n        \"category\": \"Other\",\n        \"rule_matched\": \"No Match\",\n        \"rule_used\": \"No Match\",\n        \"confidence_score\": 0.5,\n        \"review_required\": True,\n    }\n\n\ndef write_exceptions(processed_rows):\n    exception_rows = [row for row in processed_rows if row[\"review_required\"]]\n    buffer = io.StringIO()\n    writer = csv.DictWriter(\n        buffer,\n        fieldnames=[\"transaction_id\", \"review_required\", \"rule_matched\"],\n    )\n    writer.writeheader()\n    writer.writerows(exception_rows)\n    return buffer.getvalue()\n\n\ndef main():\n    row = {\n        \"transaction_id\": \"TXN001\",\n        \"date\": \"2024-01-01\",\n        \"account\": \"Main\",\n        \"description\": \"Misc charge\",\n        \"counterparty\": \"Vendor\",\n        \"amount\": \"10.00\",\n        \"currency\": \"GBP\",\n        \"reference\": \"REF1\",\n        \"direction\": \"debit\",\n    }\n    processed_rows = [process_transaction(row)]\n    write_exceptions(processed_rows)\n",
+  "expected_fix": "Expand the exception CSV DictWriter fieldnames to cover every key being written, or project each exception row to the declared fieldnames before calling writerows(). Preserve outputs/exceptions.csv and write the header even when there are zero exception rows."
+}

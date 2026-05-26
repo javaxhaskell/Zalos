@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-05-26T01:02:33.084790+00:00",
+  "author_blind_eval_mode": true,
+  "real_model": true,
+  "provenance": {
+    "git_commit": "579fa3019275071080b188daffbc71930a443694",
+    "git_dirty": true,
+    "author_requires_model_calls": true,
+    "author_requires_model_contribution": true
+  },
+  "total": 1,
+  "passed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "case_id": "expense_exception_review",
+      "passed": false,
+      "skipped": false,
+      "expected_status": "completed",
+      "actual_status": "failed_other",
+      "expected_error": null,
+      "actual_error": "golden_output_comparison_failed",
+      "build_mode": "llm_custom",
+      "model_calls": 6,
+      "tokens_used": 76936,
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro, deepseek-v4-flash",
+      "model_stages": [
+        "contract_planning",
+        "contract_review",
+        "code_generation",
+        "test_generation",
+        "execution_repair"
+      ],
+      "generated_files": [
+        "generated/agent.py",
+        "generated/author_output_contract.json",
+        "generated/model_code_plan.json",
+        "generated/model_contract_plan.json",
+        "generated/model_contract_review.json",
+        "generated/tests/test_agent.py",
+        "reports/model_authoring_summary.md"
+      ],
+      "validation_result": "fail",
+      "archive_path": "/Users/arhamshuaib/Desktop/Zalos/.workspaces-blind-eval/377b000c-d5d7-4dbe-8c6e-d730d9155f6f/archive.zip",
+      "workflow_type": "expense_exception_review",
+      "oracle_passed": null,
+      "oracle_message": null,
+      "failure_reason": "expected status completed, got failed_other"
+    }
+  ]
+}

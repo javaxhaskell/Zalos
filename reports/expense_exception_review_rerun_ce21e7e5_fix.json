@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-05-25T12:52:34.508000+00:00",
+  "session_id": "3bb42792-0bbe-4a74-aeb0-b59d3ad46dfe",
+  "workspace": ".workspaces-blind-eval/3bb42792-0bbe-4a74-aeb0-b59d3ad46dfe",
+  "status": "failed_other",
+  "error_code": "pipeline_crash",
+  "error_detail": "KeyError: 'id' in event_log._last_event_id after generated agent overwrote events.jsonl with non-AuditEvent records",
+  "wall_time_seconds": 354.9,
+  "pytest": {
+    "collected": null,
+    "passed": null,
+    "failed": null,
+    "exit_code": null,
+    "summary": "not reached — pipeline crashed before generated pytest gate"
+  },
+  "deterministic_validation_passed": true,
+  "deterministic_validation_note": "Re-validated produced artifacts with fixed validator after pipeline crash; exception consistency now passes.",
+  "validation_layers": [
+    {
+      "layer": "row_level",
+      "name": "Exception list consistency",
+      "passed": true,
+      "evidence": "5 exception rows match flagged output rows"
+    }
+  ],
+  "outputs_produced": [
+    "outputs/output.csv",
+    "outputs/exceptions.csv",
+    "reports/validation_report.md",
+    "reports/model_authoring_summary.md",
+    "generated/agent.py",
+    "generated/tests/test_agent.py"
+  ],
+  "archive_produced": false,
+  "remaining_blocker": "Generated agent writes ad-hoc events.jsonl entries without AuditEvent id field, causing event_log.append KeyError before completion/archive."
+}

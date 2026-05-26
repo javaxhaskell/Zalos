@@ -1,0 +1,386 @@
+{
+  "schema_profile": {
+    "columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes"
+    ],
+    "row_count": 150,
+    "upload_format": "xlsx",
+    "agent_input_path": "uploads/normalised_input.csv",
+    "normalized_input_path": "uploads/normalised_input.csv",
+    "selected_sheet": "AR_Remittance"
+  },
+  "contract_reference": {
+    "workflow_type": "model_authored_finance_workflow",
+    "build_mode": "llm_custom",
+    "input_file": "uploads/normalised_input.csv",
+    "input_format": "xlsx",
+    "selected_sheet": "AR_Remittance",
+    "row_level_output_file": "outputs/output.csv",
+    "summary_output_files": [
+      {
+        "description": "Grouped totals by customer and aging bucket",
+        "optional_columns": [],
+        "path": "outputs/summary_by_customer_and_bucket.csv",
+        "required_columns": [
+          "customer_id",
+          "aging_bucket",
+          "exposure_amount"
+        ]
+      }
+    ],
+    "exception_output_files": [
+      {
+        "description": "Rows flagged for review",
+        "optional_columns": [],
+        "path": "outputs/exceptions.csv",
+        "required_columns": [
+          "invoice_id",
+          "issue_flag",
+          "issue_reason"
+        ]
+      }
+    ],
+    "input_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes"
+    ],
+    "output_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes",
+      "residual_balance",
+      "open_exposure_gbp",
+      "aging_bucket"
+    ],
+    "required_output_columns": [
+      "residual_balance",
+      "open_exposure_gbp",
+      "aging_bucket"
+    ],
+    "output_column_semantics": [
+      {
+        "allow_empty_string": false,
+        "description": "Residual balance after payments, credits, and deductions",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank.",
+        "name": "residual_balance",
+        "nullable": false,
+        "producer_kind": "calculation",
+        "required": true,
+        "row_semantics": "Emit the derived residual balance for each output row using the contract's calculation or documented row-level logic."
+      },
+      {
+        "allow_empty_string": false,
+        "description": "Open exposure converted into GBP",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank.",
+        "name": "open_exposure_gbp",
+        "nullable": false,
+        "producer_kind": "calculation",
+        "required": true,
+        "row_semantics": "Emit the derived open exposure in GBP for each output row using the contract's calculation or documented row-level logic."
+      },
+      {
+        "allow_empty_string": false,
+        "description": "Aging bucket as of 2026-05-01",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank.",
+        "name": "aging_bucket",
+        "nullable": false,
+        "producer_kind": "classification",
+        "required": true,
+        "row_semantics": "Assign the appropriate aging bucket based on due date relative to 2026-05-01."
+      }
+    ],
+    "calculated_fields": [
+      {
+        "description": "Residual balance after payments, credits, and deductions",
+        "formula": "invoice_amount - paid_amount - credit_note_amount - deduction_amount",
+        "name": "residual_balance"
+      },
+      {
+        "description": "Open exposure converted into GBP",
+        "formula": "residual_balance",
+        "name": "open_exposure_gbp"
+      }
+    ],
+    "summary_group_keys": [],
+    "summary_metrics": [
+      {
+        "description": "Total open exposure by customer and aging bucket",
+        "filter": null,
+        "formula": null,
+        "group_by": [
+          "customer_id",
+          "aging_bucket"
+        ],
+        "input_columns": [],
+        "metric_type": "sum",
+        "name": "exposure_amount",
+        "output_column": null,
+        "source_column": "open_exposure_gbp"
+      }
+    ],
+    "exception_rules": [
+      {
+        "condition": "residual_balance > 0",
+        "name": "requires_review",
+        "output_column": "issue_flag",
+        "reason": "Residual balance remains open after remittance application.",
+        "severity": "warning"
+      },
+      {
+        "condition": "residual_balance < 0",
+        "name": "negative_residual",
+        "output_column": "issue_flag",
+        "reason": "Negative residual balance detected, review required.",
+        "severity": "critical"
+      }
+    ],
+    "validation_checks": [
+      {
+        "check_id": "valid_residual_balance",
+        "check_type": "formula",
+        "formula": "residual_balance >= 0",
+        "input_columns": [
+          "residual_balance"
+        ],
+        "layer": "row_level",
+        "name": "Ensure residual balance is non-negative",
+        "output_column": null,
+        "output_file": null,
+        "required": true,
+        "severity": null,
+        "tolerance": null
+      },
+      {
+        "check_id": "valid_open_exposure_gbp",
+        "check_type": "formula",
+        "formula": "open_exposure_gbp >= 0",
+        "input_columns": [
+          "open_exposure_gbp"
+        ],
+        "layer": "row_level",
+        "name": "Ensure open exposure in GBP is non-negative",
+        "output_column": null,
+        "output_file": null,
+        "required": true,
+        "severity": null,
+        "tolerance": null
+      }
+    ],
+    "requested_deliverables": [
+      "outputs/summary_by_customer_and_bucket.csv",
+      "outputs/exceptions.csv"
+    ],
+    "allowed_enums": {
+      "aging_bucket": [
+        "0-30 days",
+        "31-60 days",
+        "61-90 days",
+        "Over 90 days"
+      ]
+    },
+    "preserve_row_count": true
+  },
+  "review_contract": {
+    "allowed_enums": {
+      "aging_bucket": [
+        "0-30 days",
+        "31-60 days",
+        "61-90 days",
+        "Over 90 days"
+      ]
+    },
+    "build_mode": "llm_custom",
+    "calculated_fields": [],
+    "exception_output_files": [
+      {
+        "description": "Rows flagged for review",
+        "optional_columns": [],
+        "path": "outputs/exceptions.csv",
+        "required_columns": [
+          "invoice_id",
+          "issue_flag",
+          "issue_reason"
+        ]
+      }
+    ],
+    "exception_rules": [
+      {
+        "condition": "confidence_score < 0.5",
+        "name": "requires_review",
+        "output_column": "issue_flag",
+        "reason": "Low confidence score, review required.",
+        "severity": "warning"
+      },
+      {
+        "condition": "status != 'Processed'",
+        "name": "invalid_status",
+        "output_column": "issue_flag",
+        "reason": "Invalid status, review required.",
+        "severity": "critical"
+      }
+    ],
+    "input_columns": [
+      "batch_id",
+      "category",
+      "currency_code",
+      "customer_id",
+      "date_of_transaction",
+      "description",
+      "direction",
+      "amount",
+      "confidence_score",
+      "country",
+      "region",
+      "status",
+      "time_of_transaction",
+      "transaction_id"
+    ],
+    "input_file": "uploads/normalised_input.csv",
+    "input_format": "xlsx",
+    "missing_deliverables": [],
+    "output_column_semantics": [
+      {
+        "allow_empty_string": false,
+        "description": "Aging bucket as of 2026-05-01",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank.",
+        "name": "aging_bucket",
+        "nullable": false,
+        "producer_kind": "classification",
+        "required": true,
+        "row_semantics": "Assign the appropriate aging bucket based on date_of_transaction relative to 2026-05-01."
+      }
+    ],
+    "output_columns": [
+      "batch_id",
+      "category",
+      "currency_code",
+      "customer_id",
+      "date_of_transaction",
+      "description",
+      "direction",
+      "amount",
+      "confidence_score",
+      "country",
+      "region",
+      "status",
+      "time_of_transaction",
+      "transaction_id",
+      "aging_bucket"
+    ],
+    "preserve_row_count": true,
+    "requested_deliverables": [
+      "outputs/summary_by_customer_and_bucket.csv",
+      "outputs/exceptions.csv"
+    ],
+    "required_output_columns": [
+      "aging_bucket"
+    ],
+    "row_level_output_file": "outputs/output.csv",
+    "selected_sheet": "AR_Remittance",
+    "summary_group_keys": [
+      "customer_id",
+      "aging_bucket"
+    ],
+    "summary_metrics": [
+      {
+        "description": "Total amount by customer and aging bucket",
+        "filter": null,
+        "formula": null,
+        "group_by": [
+          "customer_id",
+          "aging_bucket"
+        ],
+        "input_columns": [],
+        "metric_type": "sum",
+        "name": "exposure_amount",
+        "output_column": null,
+        "source_column": "amount"
+      }
+    ],
+    "summary_output_files": [
+      {
+        "description": "Grouped totals by customer and aging bucket",
+        "optional_columns": [],
+        "path": "outputs/summary_by_customer_and_bucket.csv",
+        "required_columns": [
+          "customer_id",
+          "aging_bucket",
+          "exposure_amount"
+        ]
+      }
+    ],
+    "tolerances": {},
+    "validation_checks": [
+      {
+        "check_id": "valid_confidence_score",
+        "check_type": "formula",
+        "formula": "confidence_score >= 0 AND confidence_score <= 1",
+        "input_columns": [
+          "confidence_score"
+        ],
+        "layer": "row_level",
+        "name": "Ensure confidence score is between 0 and 1",
+        "output_column": null,
+        "output_file": null,
+        "required": true,
+        "severity": "critical",
+        "tolerance": null
+      }
+    ],
+    "workflow_type": "model_authored_finance_workflow"
+  }
+}

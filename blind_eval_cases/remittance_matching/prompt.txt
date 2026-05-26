@@ -1,0 +1,1 @@
+Match remittance payments to open invoices. Flag unmatched amounts and produce a reconciliation output with validation evidence.

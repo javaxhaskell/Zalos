@@ -1,0 +1,139 @@
+{
+  "session_id": "ce21e7e5-ce6f-4332-a645-d17075a4866d",
+  "workflow_type": "expense_exception_review",
+  "root_cause": "validation_layer_semantics_too_narrow",
+  "failure_before_fix": "exception count 5 != flagged rows 0",
+  "contract_snippet": {
+    "workflow_type": "expense_exception_review",
+    "build_mode": "llm_custom",
+    "input_file": "uploads/input.csv",
+    "input_format": "csv",
+    "primary_row_key": "expense_id",
+    "row_level_output_file": "outputs/output.csv",
+    "exception_output_files": [
+      {
+        "path": "outputs/exceptions.csv",
+        "description": "Rows flagged for review containing only lines where exception_flag == 'exception'",
+        "required_columns": [
+          "expense_id",
+          "exception_flag",
+          "exception_reason",
+          "severity",
+          "rule_used",
+          "confidence"
+        ],
+        "optional_columns": []
+      }
+    ],
+    "input_columns": ["expense_id", "amount", "approval_status", "receipt_attached", "policy_limit", "notes"],
+    "output_columns": ["expense_id", "amount", "exception_flag", "exception_reason", "severity", "rule_used", "confidence"],
+    "required_output_columns": ["expense_id", "exception_flag", "exception_reason", "severity", "rule_used", "confidence"],
+    "allowed_enums": {
+      "exception_flag": ["exception", "no_issue"],
+      "severity": ["high", "medium", "low", "none"]
+    },
+    "output_column_semantics": [
+      {
+        "name": "exception_flag",
+        "description": "Review flag indicating whether row requires attention",
+        "producer_kind": "exception_flag",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Must be 'exception' when one or more exception rules match; otherwise 'no_issue'.",
+        "fallback_value_semantics": "Use 'no_issue' when no exception rule triggers."
+      }
+    ],
+    "summary_metrics": [
+      {
+        "name": "exception_count",
+        "metric_type": "count",
+        "source_column": "exception_flag",
+        "filter": "exception_flag == 'exception'"
+      },
+      {
+        "name": "no_issue_count",
+        "metric_type": "count",
+        "source_column": "exception_flag",
+        "filter": "exception_flag == 'no_issue'"
+      }
+    ],
+    "exception_rules": [
+      {
+        "name": "amount_over_policy",
+        "condition": "amount > policy_limit",
+        "output_column": "exception_flag",
+        "reason": "Expense amount exceeds policy limit",
+        "severity": "high"
+      }
+    ],
+    "validation_checks": [],
+    "requested_deliverables": [
+      "outputs/output.csv",
+      {
+        "name": "Exceptions file",
+        "output_path": "outputs/exceptions.csv",
+        "required": true,
+        "source": "user_explicit"
+      },
+      {
+        "name": "Validation report",
+        "output_path": "reports/validation_report.md",
+        "required": true,
+        "source": "platform_canonical"
+      }
+    ],
+    "preserve_row_count": true
+  },
+  "output_rows": [
+    {
+      "expense_id": "EXP-001",
+      "amount": "120.00",
+      "exception_flag": "exception",
+      "exception_reason": "Expense amount exceeds policy limit",
+      "severity": "high",
+      "rule_used": "amount_over_policy",
+      "confidence": "1.0"
+    },
+    {
+      "expense_id": "EXP-002",
+      "amount": "150.00",
+      "exception_flag": "exception",
+      "exception_reason": "Missing receipt on expense",
+      "severity": "medium",
+      "rule_used": "missing_receipt",
+      "confidence": "1.0"
+    },
+    {
+      "expense_id": "EXP-003",
+      "amount": "42.00",
+      "exception_flag": "no_issue",
+      "exception_reason": "no_issue",
+      "severity": "none",
+      "rule_used": "none",
+      "confidence": "1.0"
+    }
+  ],
+  "exception_rows": [
+    {
+      "expense_id": "EXP-001",
+      "exception_flag": "exception",
+      "exception_reason": "Expense amount exceeds policy limit",
+      "severity": "high",
+      "rule_used": "amount_over_policy",
+      "confidence": "1.0"
+    },
+    {
+      "expense_id": "EXP-002",
+      "exception_flag": "exception",
+      "exception_reason": "Missing receipt on expense",
+      "severity": "medium",
+      "rule_used": "missing_receipt",
+      "confidence": "1.0"
+    }
+  ],
+  "expected_after_fix": {
+    "exception_consistency_passed": true,
+    "evidence": "2 exception rows match flagged output rows"
+  }
+}

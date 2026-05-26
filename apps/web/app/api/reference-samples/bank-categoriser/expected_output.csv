@@ -1,0 +1,19 @@
+transaction_id,date,account,description,counterparty,amount,currency,reference,direction,category,rule_matched,rule_used,confidence_score,review_required
+BTX-0001,2026-05-01,Operating GBP,STRIPE PAYOUT MAY 01,Stripe,5280.42,GBP,PO-7712,credit,Revenue,Matched Stripe payout keyword,Matched Stripe payout keyword,0.96,false
+BTX-0002,2026-05-02,Operating GBP,CLIENT TRANSFER INV-8821,Horizon Retail Ltd,2400.00,GBP,INV-8821,credit,Revenue,Matched client transfer receipt rule,Matched client transfer receipt rule,0.94,false
+BTX-0003,2026-05-03,Operating GBP,PAYROLL MAY RUN,Staff Payroll,-18500.00,GBP,PAYROLL-05,debit,Payroll,Matched payroll run keyword,Matched payroll run keyword,0.99,false
+BTX-0004,2026-05-04,Operating GBP,AWS EMEA CLOUD SERVICES,Amazon Web Services,-1160.88,GBP,AWS-2026-05,debit,Software,Matched AWS cloud services keyword,Matched AWS cloud services keyword,0.95,false
+BTX-0005,2026-05-05,Operating GBP,MICROSOFT 365 BUSINESS PLAN,Microsoft,-42.99,GBP,MSFT-365,debit,Software,Matched Microsoft subscription keyword,Matched Microsoft subscription keyword,0.95,false
+BTX-0006,2026-05-06,Operating GBP,GITHUB PRO SUBSCRIPTION,GitHub,-12.14,GBP,GITHUB-05,debit,Software,Matched GitHub subscription keyword,Matched GitHub subscription keyword,0.94,false
+BTX-0007,2026-05-07,Operating GBP,BARCLAYS SERVICE CHARGE,Barclays,-18.00,GBP,FEE-051,debit,Bank Fees,Matched bank service charge keyword,Matched bank service charge keyword,0.93,false
+BTX-0008,2026-05-08,Operating GBP,TRAINLINE BUSINESS TRAVEL,Trainline,-86.20,GBP,TRAVEL-55,debit,Travel,Matched Trainline travel keyword,Matched Trainline travel keyword,0.95,false
+BTX-0009,2026-05-09,Operating GBP,UBER TRIP TO CLIENT SITE,Uber,-31.40,GBP,UBER-883,debit,Travel,Matched Uber travel keyword,Matched Uber travel keyword,0.94,false
+BTX-0010,2026-05-10,Operating GBP,BRITISH AIRWAYS LHR-MAD,British Airways,-420.00,GBP,FLIGHT-221,debit,Travel,Matched airline travel keyword,Matched airline travel keyword,0.96,false
+BTX-0011,2026-05-11,Operating GBP,WEWORK OFFICE RENT MAY,WeWork,-3100.00,GBP,RENT-05,debit,Rent,Matched WeWork office rent rule,Matched WeWork office rent rule,0.97,false
+BTX-0012,2026-05-12,Operating GBP,HMRC VAT PAYMENT,HMRC,-920.00,GBP,VAT-Q2,debit,Tax,Matched HMRC VAT payment rule,Matched HMRC VAT payment rule,0.97,false
+BTX-0013,2026-05-13,Operating GBP,AMAZON BUSINESS OFFICE CHAIRS,Amazon Business,-324.50,GBP,AMZN-4481,debit,Office Supplies,Matched Amazon Business office purchase rule,Matched Amazon Business office purchase rule,0.95,false
+BTX-0014,2026-05-14,Operating GBP,IKEA OFFICE FURNITURE DELIVERY,IKEA,-321.25,GBP,IKEA-404,debit,Office Supplies,Matched IKEA office furniture rule,Matched IKEA office furniture rule,0.94,false
+BTX-0015,2026-05-15,Operating GBP,OFFICE SUPPLIES ROUTINE,Staples,-54.37,GBP,SUPPLIES-090,debit,Office Supplies,Matched routine office supplies rule,Matched routine office supplies rule,0.92,false
+BTX-0016,2026-05-16,Operating GBP,ADOBE CREATIVE CLOUD,Adobe,-59.99,GBP,ADOBE-05,debit,Software,Matched Adobe subscription keyword,Matched Adobe subscription keyword,0.95,false
+BTX-0017,2026-05-17,Operating GBP,CLIENT RECEIPT INV-8840,Oakbridge Foods,1250.00,GBP,INV-8840,credit,Revenue,Matched customer receipt rule,Matched customer receipt rule,0.93,false
+BTX-0018,2026-05-18,Operating GBP,UNKNOWN CARD PURCHASE 9912,Unknown Merchant,-455.10,GBP,CARD-9912,debit,Other,No explicit rule matched,No explicit rule matched,0.45,true

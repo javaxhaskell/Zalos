@@ -1,0 +1,40 @@
+{
+  "session_id": "5aa804ba-0272-4c65-84fd-cfc94c56bfdc",
+  "user_description": "Build an agent that categorises this bank transaction file for finance review. Preserve every original input row and add category, rule_matched, rule_used, confidence_score, and review_required.",
+  "workflow_type": "model_authored_finance_workflow",
+  "template_hint": "bank_categoriser",
+  "root_cause_classification": 7,
+  "root_cause_summary": "Mixed issue: agent keyword matching too literal plus generated pytest misinterpreted clear_rule_confidence_08; pytest repair routed to test file only.",
+  "failing_tests": [
+    "generated/tests/test_agent.py::test_report_contains_summary_evidence",
+    "generated/tests/test_agent.py::test_confidence_score_constraints"
+  ],
+  "assertion_failures": [
+    "AssertionError: Category 'Bank Fees' missing from report",
+    "AssertionError: Row 6: rule_matched='No rule matched' but confidence 0.4 < 0.80"
+  ],
+  "generated_test_snippets": {
+    "test_report_contains_summary_evidence": "for cat in categories:\n    assert cat in content, f\"Category '{cat}' missing from report\"",
+    "test_confidence_score_constraints": "if rule_matched.strip():\n    assert conf >= 0.80, (\n        f\"Row {i}: rule_matched='{rule_matched}' but confidence {conf} < 0.80\"\n    )"
+  },
+  "generated_agent_snippets": {
+    "bank_fees_keywords": "if any(kw in combined for kw in [\"bank service charge\", \"account fee\", \"bank fee\"]):",
+    "fallback_branch": "rule_matched = \"No rule matched\"\nconfidence_score = \"0.40\""
+  },
+  "contract_excerpt": {
+    "clear_rule_confidence_08_formula": "(rule_matched == '' or rule_matched is null or confidence_score >= 0.80)",
+    "rule_matched_fallback_semantics": "If no explicit rule matched, emit an empty string or a note indicating no matching rule.",
+    "summary_metrics": [
+      "transaction_count",
+      "total_debits",
+      "total_credits",
+      "net_amount"
+    ]
+  },
+  "output_excerpt": {
+    "misclassified_row": "BTX-0007,...,Other,No rule matched,...,0.40,true",
+    "expected_row": "BTX-0007,...,Bank Fees,...,>=0.80,false"
+  },
+  "repair_observation": "execution_repair attempt 1 and 2 modified generated/repairs/attempt_N/tests/test_agent.py only; all 8 candidate tests failed.",
+  "expected_fix": "Inject demo-shaped substring keyword codegen guidance when bundled bank contract shape is detected without scaffold; align test-generation guidance with clear_rule_confidence_08; route classification/report pytest failures to agent repair instead of test-only repair."
+}

@@ -1,0 +1,3 @@
+vendor,vendor_id,invoice_id,due_date,amount,currency,status
+Acme Supplies,VND-100,INV-9001,2026-02-15,1250.00,USD,approved
+Beta Logistics,VND-200,INV-9002,2026-02-20,890.50,USD,pending

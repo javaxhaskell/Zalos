@@ -1,0 +1,12 @@
+{
+  "id": "remittance_matching",
+  "workflow_type": "remittance_matching",
+  "input_file": "input.csv",
+  "prompt_file": "prompt.txt",
+  "upload_format": "csv",
+  "allowed_build_modes": ["llm_custom"],
+  "expected_status": "failed_other",
+  "expected_error": "author_contract_planning_failed",
+  "use_model": true,
+  "min_model_calls": 1
+}

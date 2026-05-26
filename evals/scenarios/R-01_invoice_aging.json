@@ -1,0 +1,42 @@
+{
+  "id": "R-01_invoice_aging",
+  "kind": "repair",
+  "fixture": "fixtures/broken_agents/invoice_aging_v1",
+  "problem_report_path": "fixtures/broken_agents/invoice_aging_v1/data/problem_report.md",
+  "expected_reproduction_method": "pytest",
+  "expected_failing_test": "test_april_invoices_in_first_bucket",
+  "expected_diagnosis": {
+    "suspected_file": "agent.py",
+    "suspected_lines_range": [
+      16,
+      26
+    ],
+    "root_cause_substring_any_of": [
+      "date format",
+      "dayfirst",
+      "DD-MM",
+      "MM-DD",
+      "strptime",
+      "%d-%m-%Y",
+      "%m-%d-%Y"
+    ]
+  },
+  "expected_patch": {
+    "file": "agent.py",
+    "hunks_count": 1,
+    "must_not_modify_files": [
+      "tests/test_aging.py",
+      "data/sample_input.csv",
+      "data/expected_output.csv",
+      "data/problem_report.md",
+      "rules.py"
+    ]
+  },
+  "expected_after_fix": {
+    "pytest_passed": 3,
+    "pytest_failed": 0,
+    "golden_diff_on_column": "aging_bucket",
+    "golden_diff_count": 0
+  },
+  "expected_terminal_status": "completed"
+}

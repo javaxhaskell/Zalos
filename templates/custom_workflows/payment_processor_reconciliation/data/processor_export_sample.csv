@@ -1,0 +1,7 @@
+payout_id,transaction_id,transaction_date,processor,currency,gross_amount,fee_amount,net_amount,settlement_batch,settlement_date,status,customer_reference,notes
+PAY-001,TXN-001,2024-01-15,Stripe,USD,1000.00,29.00,971.00,BATCH-001,2024-01-16,settled,CUST-001,
+PAY-002,TXN-002,2024-01-15,Stripe,USD,500.00,14.50,485.50,BATCH-001,2024-01-16,settled,CUST-002,
+PAY-003,TXN-003,2024-01-16,Adyen,USD,250.00,7.25,242.75,BATCH-002,2024-01-17,settled,CUST-003,
+PAY-004,TXN-004,2024-01-16,Stripe,USD,120.00,3.48,115.00,BATCH-002,2024-01-17,settled,CUST-004,Possible dispute follow-up
+PAY-005,TXN-005,2024-01-17,Adyen,USD,880.00,25.52,854.48,BATCH-003,2024-01-18,failed,CUST-005,Chargeback received
+PAY-006,TXN-006,2024-01-17,Stripe,USD,300.00,8.70,280.00,BATCH-003,2024-01-18,settled,,Missing customer reference

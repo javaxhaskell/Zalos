@@ -1,0 +1,13 @@
+{
+  "id": "expense_exception_review",
+  "workflow_type": "expense_exception_review",
+  "input_file": "input.csv",
+  "prompt_file": "prompt.txt",
+  "upload_format": "csv",
+  "allowed_build_modes": ["llm_custom"],
+  "expected_status": "completed",
+  "expected_error": null,
+  "use_model": true,
+  "requires_real_model": true,
+  "min_model_calls": 4
+}

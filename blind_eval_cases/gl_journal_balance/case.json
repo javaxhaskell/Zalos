@@ -1,0 +1,12 @@
+{
+  "id": "gl_journal_balance",
+  "workflow_type": "gl_journal_preparation",
+  "input_file": "input.csv",
+  "prompt_file": "prompt.txt",
+  "upload_format": "csv",
+  "allowed_build_modes": ["llm_custom"],
+  "expected_status": "failed_other",
+  "expected_error": "author_model_required_for_authoring",
+  "use_model": false,
+  "min_model_calls": 0
+}

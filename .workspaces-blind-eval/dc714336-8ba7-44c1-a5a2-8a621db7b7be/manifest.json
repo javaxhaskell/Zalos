@@ -1,0 +1,25 @@
+{
+  "session_id": "dc714336-8ba7-44c1-a5a2-8a621db7b7be",
+  "workflow": "author",
+  "status": "created",
+  "current_phase": null,
+  "current_step": 0,
+  "started_at": "2026-05-23T03:17:16.119731Z",
+  "updated_at": "2026-05-23T03:17:16.119731Z",
+  "workspace_path": "/Users/arhamshuaib/Desktop/Zalos/.workspaces-blind-eval/dc714336-8ba7-44c1-a5a2-8a621db7b7be",
+  "schema_version": 1,
+  "budget": {
+    "tokens_used": 0,
+    "tokens_limit": 150000,
+    "tool_calls_used": 0,
+    "tool_calls_limit": 40,
+    "steps_used": 0,
+    "steps_limit": 25,
+    "wall_seconds_used": 0,
+    "wall_seconds_limit": 1500,
+    "file_count": 0,
+    "file_count_limit": 20
+  },
+  "file_hashes": {},
+  "completion": null
+}

@@ -1,0 +1,96 @@
+{
+  "schema_profile": {
+    "columns": [
+      "invoice_id",
+      "vendor_id",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "paid_amount",
+      "vendor_terms_days"
+    ],
+    "row_count": 25,
+    "upload_format": "csv",
+    "agent_input_path": "uploads/vendor_payments.csv",
+    "normalized_input_path": "uploads/vendor_payments.csv"
+  },
+  "contract": {
+    "workflow_type": "vendor_payment_review",
+    "workflow_confidence": 0.85,
+    "build_mode": "llm_custom",
+    "input_file": "uploads/vendor_payments.csv",
+    "input_format": "csv",
+    "row_level_output_file": "outputs/output.csv",
+    "summary_output_files": [],
+    "exception_output_files": [],
+    "input_columns": [
+      "invoice_id",
+      "vendor_id",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "paid_amount",
+      "vendor_terms_days"
+    ],
+    "output_columns": [
+      "invoice_id",
+      "vendor_id",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "paid_amount",
+      "vendor_terms_days",
+      "open_amount",
+      "recommended_payment_date"
+    ],
+    "required_output_columns": [
+      "open_amount",
+      "recommended_payment_date"
+    ],
+    "output_column_semantics": [
+      {
+        "name": "open_amount",
+        "description": "Open amount after subtracting payments",
+        "producer_kind": "calculation",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived open amount for each output row using the contract's calculation logic.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      }
+    ],
+    "calculated_fields": [
+      {
+        "name": "open_amount",
+        "description": "Open amount after subtracting payments",
+        "formula": "invoice_amount - paid_amount"
+      },
+      {
+        "name": "recommended_payment_date",
+        "description": "Recommended payment date for the finance team",
+        "formula": "recommend_payment_date(due_date, vendor_terms_days)"
+      }
+    ],
+    "formula_input_columns": [
+      "invoice_amount",
+      "paid_amount",
+      "due_date",
+      "vendor_terms_days"
+    ],
+    "formula_output_columns": [
+      "open_amount",
+      "recommended_payment_date"
+    ],
+    "summary_group_keys": [],
+    "summary_metrics": [],
+    "exception_rules": [],
+    "validation_checks": [],
+    "allowed_enums": {},
+    "requested_deliverables": [],
+    "produced_deliverables": [],
+    "missing_deliverables": [],
+    "clarification_questions": [],
+    "unsupported_reasons": [],
+    "preserve_row_count": true
+  }
+}

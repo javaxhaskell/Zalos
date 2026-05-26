@@ -1,0 +1,21 @@
+invoice_id,customer,invoice_date,due_date,amount,status,days_overdue,aging_bucket,risk_flag
+INV-0001,Acme Industries,2026-04-15,2026-05-15,1200.00,open,-14,Current,none
+INV-0002,Beta Logistics,2026-04-01,2026-04-25,250.50,paid,6,Paid,none
+INV-0003,Gamma Holdings,2026-04-20,2026-04-30,80.00,open,1,1-30,low
+INV-0004,Delta Partners,2026-03-15,2026-04-15,540.00,open,16,1-30,low
+INV-0005,Epsilon Co,2026-02-15,2026-03-31,990.00,open,31,31-60,medium
+INV-0006,Zeta Services,2026-02-15,2026-03-15,420.00,open,47,31-60,medium
+INV-0007,Eta Group,2026-01-15,2026-03-01,1100.00,open,61,61-90,medium
+INV-0008,Theta Ltd,2026-01-10,2026-02-14,760.00,open,76,61-90,medium
+INV-0009,Iota Supplies,2025-11-15,2025-12-31,320.00,open,121,90+,medium
+INV-0010,Kappa Foods,2025-12-01,2025-12-31,2400.00,open,121,90+,high
+INV-0011,Lambda Tech,2026-04-25,2026-05-25,180.00,open,-24,Current,none
+INV-0012,Mu Trading,2026-02-20,2026-03-22,510.00,paid,40,Paid,none
+INV-0013,Nu Studios,2026-03-01,2026-03-31,1450.00,open,31,31-60,medium
+INV-0014,Xi Capital,2026-01-05,2026-02-04,3200.00,open,86,61-90,medium
+INV-0015,Omicron Foods,2025-10-01,2025-11-01,150.00,open,181,90+,medium
+INV-0016,Pi Logistics,2026-03-20,2026-04-20,640.00,open,11,1-30,low
+INV-0017,Rho Goods,2026-04-10,2026-04-30,1020.00,open,1,1-30,low
+INV-0018,Sigma Co,2026-02-01,2026-03-31,210.00,open,31,31-60,medium
+INV-0019,Tau Partners,2025-12-15,2026-01-15,1800.00,open,106,90+,high
+INV-0020,Upsilon Inc,2026-04-22,2026-05-22,470.00,open,-21,Current,none

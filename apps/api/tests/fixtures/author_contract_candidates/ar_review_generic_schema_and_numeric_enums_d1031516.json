@@ -1,0 +1,525 @@
+{
+  "session_id": "d1031516-7720-40b9-8466-65680035336c",
+  "schema_profile": {
+    "columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes"
+    ],
+    "upload_format": "xlsx",
+    "selected_sheet": "AR_Remittance",
+    "agent_input_path": "uploads/normalised_input.csv",
+    "normalized_input_path": "uploads/normalised_input.csv"
+  },
+  "contract_reference": {
+    "workflow_type": "ar_remittance_processing",
+    "build_mode": "llm_custom",
+    "input_file": "uploads/normalised_input.csv",
+    "input_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes"
+    ],
+    "output_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes",
+      "residual_balance",
+      "open_exposure_gbp",
+      "aging_bucket"
+    ],
+    "required_output_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes",
+      "residual_balance",
+      "open_exposure_gbp",
+      "aging_bucket"
+    ],
+    "optional_output_columns": [],
+    "primary_row_key": "invoice_id",
+    "row_level_output_file": "outputs/output.csv",
+    "summary_output_files": [
+      {
+        "description": "Summary of exposure by customer and aging bucket",
+        "optional_columns": [],
+        "path": "outputs/summary_by_customer_and_bucket.csv",
+        "required_columns": [
+          "customer_id",
+          "aging_bucket",
+          "exposure_total"
+        ]
+      }
+    ],
+    "exception_output_files": [
+      {
+        "description": "Rows flagged for review",
+        "optional_columns": [],
+        "path": "outputs/exceptions.csv",
+        "required_columns": [
+          "invoice_id",
+          "issue_flag",
+          "issue_reason"
+        ]
+      }
+    ],
+    "summary_metrics": [
+      {
+        "description": "Total exposure by customer and aging bucket",
+        "filter": null,
+        "formula": null,
+        "group_by": [],
+        "input_columns": [],
+        "metric_type": "sum",
+        "name": "exposure_total",
+        "output_column": null,
+        "source_column": "open_exposure_gbp"
+      }
+    ],
+    "requested_deliverables": [
+      "outputs/output.csv",
+      "outputs/summary_by_customer_and_bucket.csv",
+      "outputs/exceptions.csv"
+    ]
+  },
+  "review_contract": {
+    "workflow_type": "ar",
+    "input_path": "data/ar/data.xlsx",
+    "row_count": 100,
+    "input_sheet_name": "Sheet1",
+    "output_path": "results/output.csv",
+    "input_format": "xlsx",
+    "build_date": "2023-04-14T12:00:00Z",
+    "workflow_name": "Accounts Receivable Workflow",
+    "row_count_validated": true,
+    "output_delimiter": ",",
+    "output_sheet_name": null,
+    "input_schema_path": "schema/ar_input.json",
+    "input_header_row": 1,
+    "output_file_type": "csv",
+    "input_column_names": [
+      "InvoiceID",
+      "CustomerID",
+      "Amount",
+      "DueDate"
+    ],
+    "allowed_enums": {
+      "Status": [
+        "Pending",
+        "Paid",
+        "Overdue"
+      ]
+    }
+  },
+  "repair_contract": {
+    "build_mode": "llm_custom",
+    "input_file": "uploads/arizona_finance_data.xlsx",
+    "input_format": "xlsx",
+    "selected_sheet": "Sheet1",
+    "row_level_output_file": "outputs/cleaned_arizona_finance_data.csv",
+    "summary_output_files": [
+      {
+        "path": "outputs/summary_arizona_finance_data.json",
+        "description": "Summary of the cleaned finance data",
+        "required_columns": [
+          "total_exposure",
+          "average_aging_bucket"
+        ]
+      }
+    ],
+    "exception_output_files": [
+      {
+        "path": "outputs/exceptions_arizona_finance_data.csv",
+        "description": "Exceptional cases in the finance data",
+        "required_columns": [
+          "invoice_id",
+          "reason"
+        ]
+      }
+    ],
+    "calculated_fields": [
+      {
+        "name": "residual_balance",
+        "description": "Residual balance remaining after payments, credits, and deductions"
+      },
+      {
+        "name": "open_exposure_gbp",
+        "description": "Open exposure converted to GBP"
+      }
+    ],
+    "exception_rules": [
+      {
+        "name": "high_aging_bucket",
+        "condition": "aging_bucket > 60",
+        "reason": "Invoice has an aging bucket greater than 60 days",
+        "severity": "warning",
+        "output_column": "issue_flag"
+      }
+    ],
+    "validation_checks": [
+      {
+        "check_id": "residual_balance_non_negative",
+        "layer": "row",
+        "name": "Residual balance should not be negative",
+        "required": true,
+        "check_type": "formula",
+        "formula": "residual_balance >= 0",
+        "input_columns": [
+          "residual_balance"
+        ],
+        "output_column": "issue_flag",
+        "severity": "error"
+      }
+    ],
+    "allowed_enums": {
+      "aging_bucket": [
+        30,
+        60,
+        90,
+        120
+      ],
+      "current_status": [
+        "pending",
+        "paid",
+        "overdue"
+      ]
+    },
+    "output_column_semantics": [
+      {
+        "name": "invoice_id",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "customer_id",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "customer_name",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "region",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "invoice_date",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "due_date",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "invoice_amount",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "invoice_currency",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "remittance_id",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "remittance_date",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "paid_amount",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "credit_note_amount",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "deduction_amount",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "deduction_reason",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "dispute_code",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "payment_reference",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "promised_payment_date",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "current_status",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "gl_account",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "notes",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "residual_balance",
+        "description": "Residual balance remaining after payments, credits, and deductions",
+        "producer_kind": "calculation",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived residual balance for each output row using the contract's calculation or documented row-level logic.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      },
+      {
+        "name": "open_exposure_gbp",
+        "description": "Open exposure converted to GBP",
+        "producer_kind": "calculation",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived open exposure in GBP for each output row using the contract's calculation or documented row-level logic.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      },
+      {
+        "name": "aging_bucket",
+        "description": "Aging bucket categorization of invoices",
+        "producer_kind": "classification",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Classify each invoice into an aging bucket based on the difference between due_date and remittance_date.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      }
+    ],
+    "summary_group_keys": [
+      "region",
+      "current_status"
+    ],
+    "summary_metrics": [
+      {
+        "name": "total_exposure",
+        "metric_type": "sum",
+        "source_column": "open_exposure_gbp",
+        "description": "Total open exposure in GBP across all invoices"
+      },
+      {
+        "name": "average_aging_bucket",
+        "metric_type": "average",
+        "source_column": "aging_bucket",
+        "description": "Average aging bucket across all invoices"
+      }
+    ],
+    "requested_deliverables": [
+      "outputs/cleaned_arizona_finance_data.csv",
+      {
+        "name": "summary",
+        "output_path": "outputs/summary_arizona_finance_data.json",
+        "required": true,
+        "description": "Summary of the cleaned finance data",
+        "source": "user_explicit"
+      },
+      {
+        "name": "exceptions",
+        "output_path": "outputs/exceptions_arizona_finance_data.csv",
+        "required": true,
+        "description": "Exceptional cases in the finance data",
+        "source": "user_explicit"
+      }
+    ],
+    "missing_deliverables": [],
+    "workflow_type": "finance_workflow"
+  }
+}

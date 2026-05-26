@@ -1,0 +1,27 @@
+{
+  "id": "A-01_bank_categoriser",
+  "kind": "author",
+  "template": "bank_categoriser",
+  "input_files": [
+    "templates/bank_categoriser/data/sample_input.csv"
+  ],
+  "workflow_description": "Categorise these bank transactions into one of: Income, Office Expense, Travel, Subscriptions, Refund, Uncategorised. Use vendor name patterns in the description, fall back to counterparty if present. Negative amounts are refunds (always tag as Refund). Match case-insensitively. The output should keep all input columns and add 'category' (one of the six enum values) and 'rule_matched' (a trace string).",
+  "expected_output_files": [
+    {
+      "path": "outputs/categorised_transactions.csv",
+      "golden": "evals/golden/bank_categoriser/golden_output.csv",
+      "comparison": "row_aligned_on_primary_key",
+      "primary_key": "txn_id",
+      "tolerance": {}
+    }
+  ],
+  "expected_validation_layers": [
+    "schema",
+    "required_columns",
+    "business_rules",
+    "row_level",
+    "golden_output",
+    "generated_pytest"
+  ],
+  "expected_terminal_status": "completed"
+}

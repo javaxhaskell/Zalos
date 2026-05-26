@@ -1,0 +1,37 @@
+MIT License
+
+Copyright (c) 2026 Arham Shuaib
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Open-source foundation attribution
+
+The agent loop in `apps/api/src/agentforge/agent/loop.py` (~280 lines)
+adapts patterns from the OpenHands CodeAct agent design
+(https://github.com/All-Hands-AI/OpenHands, commit
+`3515cb085834623d9d0ef9d6977d1bcfa2b6eb57`, MIT-licensed). No OpenHands
+code was imported, vendored, or copied; the action/observation model,
+event-stream-driven state, and bounded loop with explicit termination
+were studied and reimplemented in a minimal form. The full attribution
+appears in `README.md`, `ARCHITECTURE.md` §4, and
+`docs/adr/0001-open-source-foundation.md`.
+
+OpenHands is licensed MIT (https://github.com/All-Hands-AI/OpenHands/blob/main/LICENSE).

@@ -1,0 +1,47 @@
+{
+  "session_id": "eed97570-e992-4b67-bce6-01dbe8051e2a",
+  "workflow_type": "expense_exception_review",
+  "template_hint": "expense_exception_review",
+  "user_description": "Build context: Expense Exception Review\n\nWorkflow request:\nReview this expense report, flag policy exceptions, and return all rows plus a separate exceptions file.",
+  "root_cause_classification": "F",
+  "root_cause_summary": "Mixed: validator and generated pytest treated rule_used as a single-value enum while agent correctly joined multi-rule rows with semicolon-separated tokens; synthetic pytest overwrote production exceptions.csv before deterministic validation.",
+  "golden_status": "PASS",
+  "golden_rows_matched": "7/7",
+  "deterministic_validation_failures": [
+    "Allowed enum values (business_rules): row 8: rule_used='amount_over_limit; missing_receipt; approval_not_final; suspicious_notes'",
+    "Exception list consistency (row_level): exception count 1 != flagged rows 5"
+  ],
+  "pytest_summary": "2 failed / 3 passed (5 collected)",
+  "failing_tests": [
+    "generated/tests/test_agent.py::test_allowed_enums",
+    "generated/tests/test_agent.py::test_exception_rule_amount_over_limit"
+  ],
+  "assertion_failures": [
+    "AssertionError: Unexpected rule_used 'amount_over_limit; missing_receipt; approval_not_final; suspicious_notes' for EXP-007",
+    "FileNotFoundError: outputs/test_fixture_exceptions.csv — synthetic test expected alternate exceptions path but agent wrote outputs/exceptions.csv"
+  ],
+  "multi_rule_row": {
+    "expense_id": "EXP-007",
+    "rule_used": "amount_over_limit; missing_receipt; approval_not_final; suspicious_notes",
+    "exception_flag": "exception",
+    "review_required": "yes"
+  },
+  "contract_exception_rules": [
+    "amount_over_limit",
+    "missing_receipt",
+    "approval_not_final",
+    "suspicious_notes"
+  ],
+  "contract_allowed_enums_keys": [
+    "exception_flag",
+    "review_required",
+    "severity",
+    "rule_used"
+  ],
+  "exceptions_csv_after_pytest": {
+    "row_count": 1,
+    "expense_id": "TEST-001",
+    "note": "Synthetic behavioural test wrote one fixture row to production exceptions.csv; deterministic validation ran after pytest."
+  },
+  "expected_fix": "Validate semicolon-separated rule_used tokens against allowed_enums.rule_used; restore production exceptions.csv after pytest when counts diverge; testgen uses containment for multi-rule rule_used and restores both output.csv and exceptions.csv after synthetic tests."
+}

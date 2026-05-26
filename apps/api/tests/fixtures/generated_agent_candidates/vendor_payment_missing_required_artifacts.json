@@ -1,0 +1,155 @@
+{
+  "session_id": "8b312aad-6764-42c3-8729-9ac5a053c18b",
+  "source_workspace": ".workspaces/8b312aad-6764-42c3-8729-9ac5a053c18b",
+  "author_output_contract": {
+    "workflow_type": "model_authored_finance_workflow",
+    "build_mode": "llm_custom",
+    "input_file": "uploads/vendor_payment_preparation.csv",
+    "input_format": "csv",
+    "row_level_output_file": "outputs/output.csv",
+    "summary_output_files": [
+      {
+        "path": "outputs/summary_by_currency_and_method.csv",
+        "description": "Summary of payable amount by currency and payment method",
+        "required_columns": [
+          "currency",
+          "payment_method",
+          "payable_amount"
+        ],
+        "optional_columns": []
+      }
+    ],
+    "exception_output_files": [
+      {
+        "path": "outputs/exceptions.csv",
+        "description": "Rows flagged for review",
+        "required_columns": [
+          "invoice_id",
+          "exception_reason"
+        ],
+        "optional_columns": []
+      }
+    ],
+    "input_columns": [
+      "vendor_id",
+      "vendor_name",
+      "invoice_id",
+      "invoice_date",
+      "due_date",
+      "amount",
+      "currency",
+      "payment_terms",
+      "approval_status",
+      "bank_account_present",
+      "tax_form_on_file",
+      "hold_flag",
+      "payment_method",
+      "category",
+      "notes"
+    ],
+    "output_columns": [
+      "vendor_id",
+      "vendor_name",
+      "invoice_id",
+      "invoice_date",
+      "due_date",
+      "amount",
+      "currency",
+      "payment_terms",
+      "approval_status",
+      "bank_account_present",
+      "tax_form_on_file",
+      "hold_flag",
+      "payment_method",
+      "category",
+      "notes",
+      "payment_status",
+      "payment_ready",
+      "exception_reason",
+      "recommended_payment_date"
+    ],
+    "required_output_columns": [
+      "payment_status",
+      "payment_ready",
+      "exception_reason",
+      "recommended_payment_date"
+    ],
+    "output_column_semantics": [
+      {
+        "name": "payment_status",
+        "description": "Derived payment status",
+        "producer_kind": "classification",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit a non-empty payment status for every output row.",
+        "fallback_value_semantics": "Use an explicit blocked or pending status when the invoice is not ready."
+      },
+      {
+        "name": "payment_ready",
+        "description": "Derived payment readiness flag",
+        "producer_kind": "exception_flag",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit a non-empty readiness flag for every output row.",
+        "fallback_value_semantics": "Use an explicit false or blocked value when the invoice is not ready."
+      },
+      {
+        "name": "exception_reason",
+        "description": "Reason the invoice is blocked from payment",
+        "producer_kind": "rule_explanation",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit a non-empty exception reason for every output row.",
+        "fallback_value_semantics": "Use an explicit no-exception or ready-for-payment reason when nothing is blocked."
+      },
+      {
+        "name": "recommended_payment_date",
+        "description": "Recommended payment date",
+        "producer_kind": "other",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived recommended payment date for each output row.",
+        "fallback_value_semantics": "Use an explicit derived fallback date or normalized placeholder so the value is never blank."
+      }
+    ],
+    "summary_group_keys": [
+      "currency",
+      "payment_method"
+    ],
+    "summary_metrics": [
+      {
+        "name": "payable_amount",
+        "metric_type": "sum",
+        "source_column": "amount",
+        "group_by": [
+          "currency",
+          "payment_method"
+        ],
+        "description": "Total payable amount by currency and payment method"
+      }
+    ],
+    "requested_deliverables": []
+  },
+  "contract_required_output_paths": [
+    "outputs/output.csv",
+    "outputs/summary_by_currency_and_method.csv",
+    "outputs/exceptions.csv"
+  ],
+  "produced_artifact_paths": [
+    "outputs/output.csv",
+    "reports/validation_report.md"
+  ],
+  "missing_required_output_paths": [
+    "outputs/summary_by_currency_and_method.csv",
+    "outputs/exceptions.csv"
+  ],
+  "generated_agent_behavior": {
+    "exit_code": 0,
+    "command": "python generated/agent.py --input uploads/vendor_payment_preparation.csv --contract generated/author_output_contract.json --row-output outputs/output.csv --report-path reports/validation_report.md",
+    "summary": "The generated agent wrote the row-level output and the workflow report, but it did not write the required summary CSV or the required exceptions CSV before exiting successfully."
+  }
+}

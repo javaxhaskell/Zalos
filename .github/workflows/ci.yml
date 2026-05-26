@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API (lint · typecheck · test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    env:
+      ANTHROPIC_API_KEY: test-key-not-real
+      DATABASE_URL: sqlite:///./.workspaces/agentforge.db
+      WORKSPACES_ROOT: ./.workspaces
+      WORKSPACES_ARCHIVE_ROOT: ./.workspaces-archive
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Setup Python
+        run: uv python install 3.11
+
+      - name: Sync dependencies
+        run: uv sync --extra dev
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Typecheck (mypy)
+        run: uv run mypy src
+
+      - name: Test (pytest)
+        run: |
+          mkdir -p .workspaces
+          uv run pytest -q
+
+      - name: OpenAPI snapshot diff
+        run: |
+          uv run python scripts/snapshot_openapi.py > /tmp/openapi.live.json
+          diff -u openapi.snapshot.json /tmp/openapi.live.json
+
+      - name: Eval suite
+        run: PYTHONPATH=src uv run python -m agentforge.evals
+
+  web:
+    name: Web (lint · typecheck · build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install workspace deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter @agentforge/web lint
+
+      - name: Typecheck
+        run: pnpm --filter @agentforge/web typecheck
+
+      - name: Build
+        run: pnpm --filter @agentforge/web build
+
+  shared:
+    name: Shared schemas (typecheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm --filter @agentforge/shared-schemas typecheck
+
+  secrets-scan:
+    name: Secrets scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config-path: .gitleaks.toml

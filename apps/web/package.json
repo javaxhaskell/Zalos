@@ -1,0 +1,43 @@
+{
+  "name": "@agentforge/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently --names api,web --prefix-colors blue,green \"make -C ../.. api\" \"pnpm run dev:web\"",
+    "dev:web": "next dev --port 3000",
+    "dev:clean": "rm -rf .next-dev && next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'Browser-layer tests deferred per architecture-presentation decision; see README known-limitations + TRANSCRIPT BP10c entry.' && exit 0",
+    "format": "prettier --write \"app/**/*.{ts,tsx}\" \"src/**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@agentforge/shared-schemas": "workspace:*",
+    "@tanstack/react-query": "^5.59.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.40.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
+    "lucide-react": "^0.460.0",
+    "next": "^14.2.18",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.4",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.18",
+    "postcss": "^8.4.49",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3"
+  }
+}

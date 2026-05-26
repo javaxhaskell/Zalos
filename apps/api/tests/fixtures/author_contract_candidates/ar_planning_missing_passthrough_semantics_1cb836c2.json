@@ -1,0 +1,303 @@
+{
+  "session_id": "1cb836c2-b4d8-4303-a6dc-6a42bddfd813",
+  "source": "contract_planning.txt author_output_contract",
+  "schema_profile": {
+    "columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes"
+    ],
+    "upload_format": "xlsx",
+    "selected_sheet": "AR_Remittance",
+    "agent_input_path": "uploads/normalised_input.csv",
+    "normalized_input_path": "uploads/normalised_input.csv"
+  },
+  "contract": {
+    "workflow_type": "model_authored_finance_workflow",
+    "workflow_confidence": 0.9,
+    "build_mode": "llm_custom",
+    "input_file": "uploads/normalised_input.csv",
+    "input_format": "xlsx",
+    "selected_sheet": "AR_Remittance",
+    "normalized_input_path": "uploads/normalised_input.csv",
+    "row_level_output_file": "outputs/output.csv",
+    "summary_output_files": [
+      {
+        "path": "outputs/summary_by_customer_and_aging_bucket.csv",
+        "description": "Summary of exposure by customer and aging bucket",
+        "required_columns": [
+          "customer_id",
+          "customer_name",
+          "aging_bucket",
+          "exposure_amount"
+        ]
+      }
+    ],
+    "exception_output_files": [
+      {
+        "path": "outputs/exceptions.csv",
+        "description": "Rows flagged for review",
+        "required_columns": [
+          "invoice_id",
+          "issue_flag",
+          "issue_reason"
+        ]
+      }
+    ],
+    "input_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes"
+    ],
+    "output_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes",
+      "residual_balance",
+      "open_exposure_gbp",
+      "aging_bucket",
+      "issue_flag"
+    ],
+    "primary_row_key": "invoice_id",
+    "required_output_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes",
+      "residual_balance",
+      "open_exposure_gbp",
+      "aging_bucket",
+      "issue_flag"
+    ],
+    "optional_output_columns": [],
+    "output_column_semantics": [
+      {
+        "name": "invoice_id",
+        "description": "Source row identifier preserved in the clean row-level output",
+        "producer_kind": "copied_input",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Copied unchanged from the source row into the clean row-level output to preserve traceability.",
+        "fallback_value_semantics": "Carry the normalized source-row value through unchanged and do not invent a new derived business value for this copied input field."
+      },
+      {
+        "name": "residual_balance",
+        "description": "Residual balance remaining after payments, credits, and deductions",
+        "producer_kind": "calculation",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived residual balance for each output row using the contract's calculation or documented row-level logic.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      },
+      {
+        "name": "open_exposure_gbp",
+        "description": "Open exposure converted to GBP",
+        "producer_kind": "calculation",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived open exposure in GBP for each output row using the contract's calculation or documented row-level logic.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      },
+      {
+        "name": "aging_bucket",
+        "description": "Aging bucket classification as of 2026-05-01",
+        "producer_kind": "classification",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived aging bucket for each output row using the contract's calculation or documented row-level logic.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      },
+      {
+        "name": "issue_flag",
+        "description": "Non-empty review flag for each output row",
+        "producer_kind": "exception_flag",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit a non-empty row-level review flag for every output row.",
+        "fallback_value_semantics": "Use an explicit default flag value even when no exception condition matches."
+      }
+    ],
+    "calculated_fields": [
+      {
+        "name": "residual_balance",
+        "description": "Residual balance after payments, credits, and deductions",
+        "formula": "invoice_amount - paid_amount - credit_note_amount - deduction_amount"
+      },
+      {
+        "name": "open_exposure_gbp",
+        "description": "Open exposure converted to GBP",
+        "formula": "residual_balance * fx_rate_to_gbp"
+      }
+    ],
+    "exception_rules": [
+      {
+        "name": "requires_review",
+        "condition": "residual_balance > 0",
+        "reason": "Residual balance remains open after remittance application.",
+        "severity": "warning",
+        "output_column": "issue_flag"
+      },
+      {
+        "name": "invalid_currency_conversion",
+        "condition": "open_exposure_gbp < 0",
+        "reason": "Invalid currency conversion detected.",
+        "severity": "high",
+        "output_column": "issue_flag"
+      }
+    ],
+    "validation_checks": [
+      {
+        "check_id": "row_count_preserved",
+        "layer": "row_level",
+        "name": "Row count preserved",
+        "required": true,
+        "check_type": "row_count"
+      },
+      {
+        "check_id": "residual_balance_formula",
+        "layer": "business_rules",
+        "name": "Residual balance formula",
+        "required": true,
+        "check_type": "formula",
+        "formula": "residual_balance == invoice_amount - paid_amount - credit_note_amount - deduction_amount",
+        "input_columns": [
+          "invoice_amount",
+          "paid_amount",
+          "credit_note_amount",
+          "deduction_amount"
+        ],
+        "output_column": "residual_balance"
+      },
+      {
+        "check_id": "open_exposure_gbp_formula",
+        "layer": "business_rules",
+        "name": "Open exposure GBP formula",
+        "required": true,
+        "check_type": "formula",
+        "formula": "open_exposure_gbp == residual_balance * fx_rate_to_gbp",
+        "input_columns": [
+          "residual_balance",
+          "fx_rate_to_gbp"
+        ],
+        "output_column": "open_exposure_gbp"
+      }
+    ],
+    "allowed_enums": {
+      "issue_flag": [
+        "no_issue",
+        "review_required"
+      ]
+    },
+    "summary_group_keys": [
+      "customer_id",
+      "aging_bucket"
+    ],
+    "summary_metrics": [
+      {
+        "name": "exposure_amount",
+        "metric_type": "sum",
+        "source_column": "open_exposure_gbp",
+        "description": "Total exposure amount grouped by customer and aging bucket",
+        "input_columns": [
+          "customer_id",
+          "aging_bucket",
+          "open_exposure_gbp"
+        ],
+        "output_column": "exposure_amount"
+      }
+    ],
+    "requested_deliverables": [
+      "outputs/output.csv",
+      {
+        "name": "summary_by_customer_and_aging_bucket",
+        "description": "Summary of exposure by customer and aging bucket",
+        "output_path": "outputs/summary_by_customer_and_aging_bucket.csv",
+        "required": true,
+        "source": "user_explicit"
+      },
+      {
+        "name": "exceptions",
+        "description": "Rows flagged for review",
+        "output_path": "outputs/exceptions.csv",
+        "required": true,
+        "source": "user_explicit"
+      }
+    ],
+    "missing_deliverables": [],
+    "skipped_checks": [],
+    "clarification_questions": [],
+    "unsupported_reasons": []
+  }
+}

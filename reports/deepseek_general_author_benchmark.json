@@ -1,0 +1,181 @@
+{
+  "generated_at": "2026-05-25T12:00:00+01:00",
+  "provider": "deepseek",
+  "base_url": "https://api.deepseek.com",
+  "scaffold_mode": {
+    "AUTHOR_ENABLE_BANK_REFERENCE_SCAFFOLD": false,
+    "normal_author_path": true
+  },
+  "stage_routing": {
+    "contract_planning": "deepseek-v4-pro",
+    "contract_schema_repair": "deepseek-v4-pro",
+    "contract_review": "deepseek-v4-pro",
+    "code_generation": "deepseek-v4-flash",
+    "test_generation": "deepseek-v4-flash",
+    "execution_repair": "deepseek-v4-flash"
+  },
+  "workflows": [
+    {
+      "workflow": "bank_transaction_categorisation_demo",
+      "session_id": "94c58f84-ee35-4c87-a1a2-ebb6e6fa6c6a",
+      "workspace": ".workspaces-deepseek-benchmark/94c58f84-ee35-4c87-a1a2-ebb6e6fa6c6a",
+      "wall_time_seconds": 340.04,
+      "status": "completed",
+      "error_code": null,
+      "furthest_stage": "archive",
+      "planning_passed": true,
+      "review_passed": true,
+      "codegen_ran": true,
+      "generated_tests_produced": true,
+      "generated_pytest_collected": 8,
+      "generated_pytest_passed": true,
+      "execution_passed": true,
+      "deterministic_validation_passed": true,
+      "outputs_produced": [
+        "outputs/output.csv"
+      ],
+      "reports_produced": [
+        "reports/model_authoring_summary.md",
+        "reports/system_validation_report.json",
+        "reports/system_validation_report.md",
+        "reports/validation_report.md"
+      ],
+      "archive_produced": true,
+      "model_calls": [
+        {
+          "purpose": "contract_planning",
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "duration_ms": 104429,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "contract_schema_repair",
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "duration_ms": 61969,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "contract_review",
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "duration_ms": 120417,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "code_generation",
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "duration_ms": 25617,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "test_generation",
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "duration_ms": 26914,
+          "stop_reason": "end_turn"
+        }
+      ],
+      "failure": null
+    },
+    {
+      "workflow": "expense_exception_review",
+      "session_id": "fafd3422-a717-465b-b656-cc382892771f",
+      "workspace": ".workspaces-deepseek-benchmark/fafd3422-a717-465b-b656-cc382892771f",
+      "wall_time_seconds": 485.97,
+      "status": "failed_other",
+      "error_code": "author_generated_code_failed",
+      "furthest_stage": "archive_failure_evidence",
+      "planning_passed": true,
+      "review_passed": true,
+      "codegen_ran": true,
+      "generated_tests_produced": true,
+      "generated_pytest_collected": 7,
+      "generated_pytest_passed": false,
+      "execution_passed": true,
+      "deterministic_validation_passed": false,
+      "outputs_produced": [
+        "outputs/archive.zip",
+        "outputs/events.jsonl",
+        "outputs/exceptions.csv",
+        "outputs/manifest.json",
+        "outputs/output.csv"
+      ],
+      "reports_produced": [
+        "reports/SESSION_README.md",
+        "reports/model_authoring_summary.md",
+        "reports/system_validation_report.json",
+        "reports/system_validation_report.md",
+        "reports/validation_report.md"
+      ],
+      "archive_produced": true,
+      "model_calls": [
+        {
+          "purpose": "contract_planning",
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "duration_ms": 141674,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "contract_schema_repair",
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "duration_ms": 86953,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "contract_review",
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "duration_ms": 95610,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "code_generation",
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "duration_ms": 53427,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "test_generation",
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "duration_ms": 39511,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "execution_repair",
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "duration_ms": 33199,
+          "stop_reason": "end_turn"
+        },
+        {
+          "purpose": "execution_repair",
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "duration_ms": 34327,
+          "stop_reason": "end_turn"
+        }
+      ],
+      "failure": {
+        "failed_check": "Generated pytest",
+        "failed_layer": "generated_pytest",
+        "validation_failures": [
+          "Exception list consistency (row_level): exception count 5 != flagged rows 0",
+          "Generated pytest (generated_pytest): no generated tests passed"
+        ],
+        "pytest_failure_summary": "7 collected tests, 0 passed; generated tests invoked generated/agent.py from pytest tmp directories where the agent file was absent. Both repair candidates preserved a similar path error."
+      }
+    },
+    {
+      "workflow": "invoice_aging_cleanup",
+      "status": "skipped",
+      "failure": "invoice_aging_cleanup.csv not found in repository"
+    }
+  ]
+}

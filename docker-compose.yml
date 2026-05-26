@@ -1,0 +1,60 @@
+# AgentForge — local Docker Compose for parity development.
+# Prototype primarily runs natively via `make up`; this file exists so
+# graders without uv installed can run the stack with a single command.
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: agentforge-api:dev
+    container_name: agentforge-api
+    environment:
+      DATABASE_URL: sqlite:////data/agentforge.db
+      WORKSPACES_ROOT: /data/workspaces
+      WORKSPACES_ARCHIVE_ROOT: /data/workspaces-archive
+      TEMPLATES_ROOT: /templates
+      FIXTURES_BROKEN_AGENTS_ROOT: /fixtures/broken_agents
+      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5-coder:14b}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL_PRIMARY: ${ANTHROPIC_MODEL_PRIMARY:-claude-sonnet-4-6}
+      ANTHROPIC_MODEL_FAST: ${ANTHROPIC_MODEL_FAST:-claude-haiku-4-5}
+      FRONTEND_ORIGIN: http://localhost:3000
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    command: >
+      sh -c "uv run alembic upgrade head &&
+             uv run uvicorn agentforge.api.main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - agentforge-data:/data
+      - ./templates:/templates:ro
+      - ./fixtures:/fixtures:ro
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: agentforge-web:dev
+    container_name: agentforge-web
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  agentforge-data:

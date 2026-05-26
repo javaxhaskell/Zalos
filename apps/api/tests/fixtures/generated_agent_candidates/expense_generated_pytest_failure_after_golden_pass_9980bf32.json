@@ -1,0 +1,38 @@
+{
+  "session_id": "9980bf32-d3f1-4b88-87ce-15768ac92e91",
+  "workflow_type": "expense_exception_review",
+  "template_hint": "expense_exception_review",
+  "user_description": "Build context: Expense Exception Review\n\nWorkflow request:\nReview this expense report, flag policy exceptions, and return all rows plus a separate exceptions file.",
+  "root_cause_classification": "F",
+  "root_cause_summary": "Mixed: contract omitted suspicious_notes while codegen/agent and golden expect it; generated pytest re-derived contract-only rules with exact exception_reason prose and invented rule_used enum.",
+  "golden_status": "PASS",
+  "golden_rows_matched": "7/7",
+  "deterministic_validation_passed": true,
+  "pytest_summary": "2 failed / 4 passed (6 collected)",
+  "failing_tests": [
+    "generated/tests/test_agent.py::test_allowed_enums",
+    "generated/tests/test_agent.py::test_exception_rules_logic"
+  ],
+  "assertion_failures": [
+    "AssertionError: Row 5, column 'rule_used' has value 'suspicious_keywords' which is not in allowed set {'amount_over_limit', 'missing_receipt', 'none', 'approval_not_final'}.",
+    "AssertionError: Row 5: field 'exception_flag' mismatch. Expected 'no_issue', got 'review_required'. Input row: expense_id=EXP-005, notes=personal weekend travel"
+  ],
+  "generated_test_snippets": {
+    "test_allowed_enums_rule_used": "rule_used: {'none', 'amount_over_limit', 'missing_receipt', 'approval_not_final'}",
+    "compute_expected_exception": "if approval != 'approved': triggered_rules.append(('approval_not_final', 'Expense approval is not final (approved).', 'medium'))"
+  },
+  "agent_output_row_5": "EXP-005,...,review_required,Notes contain suspicious keyword(s): personal.,yes,medium,suspicious_keywords",
+  "golden_row_5": "EXP-005,yes",
+  "contract_exception_rules": [
+    "amount_over_limit",
+    "missing_receipt",
+    "approval_not_final"
+  ],
+  "contract_allowed_enums_keys": [
+    "exception_flag",
+    "review_required",
+    "severity"
+  ],
+  "repair_observation": "execution_repair attempt 1 used failure_kind=pytest; candidate rewrote tests with suspicious_keywords helper but still failed on exception_reason prose mismatch (1 failed / 5 passed).",
+  "expected_fix": "Expense testgen prefers stable fields over exact exception_reason prose; derive rule_used from contract exception_rules only; route brittle expense pytest failures to test-only repair with expense_exception_pytest_repair_requirements; strengthen contract review to include suspicious_notes when notes column present."
+}

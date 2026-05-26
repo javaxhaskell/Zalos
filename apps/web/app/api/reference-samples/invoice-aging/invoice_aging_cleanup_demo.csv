@@ -1,0 +1,16 @@
+invoice_id,customer,invoice_date,due_date,amount,status
+INV-2026-001,ACME Ltd,05/06/2026,06/06/2026,1250.00,open
+INV-2026-002,Globex Corp,04/03/2026,05/03/2026,890.50,open
+INV-2026-003,Initech Services,03/07/2026,04/07/2026,4320.75,open
+INV-2026-004,Umbrella Pharma,02/11/2026,03/11/2026,675.20,paid
+INV-2026-005,Stark Industries,01/08/2026,02/08/2026,2100.00,open
+INV-2026-006,Wayne Enterprises,06/05/2026,07/05/2026,1540.33,open
+INV-2026-007,Hooli LLC,05/04/2026,06/04/2026,980.10,overdue
+INV-2026-008,Oscorp,04/02/2026,05/02/2026,3200.00,open
+INV-2026-009,Tyrell Corp,03/09/2026,04/09/2026,760.45,paid
+INV-2026-010,Cyberdyne,02/06/2026,03/06/2026,1890.00,open
+INV-2026-011,Vehement Capital,01/05/2026,02/05/2026,540.00,open
+INV-2026-012,Massive Dynamic,06/03/2026,07/03/2026,2750.80,overdue
+INV-2026-013,Prestige Worldwide,05/02/2026,06/02/2026,1125.60,open
+INV-2026-014,Vandelay Industries,04/01/2026,05/01/2026,430.25,paid
+INV-2026-015,Paper Street Soap,03/04/2026,04/04/2026,2999.99,open

@@ -1,0 +1,246 @@
+{
+  "session_id": "6d5f2d37-f262-4503-8a4e-d33531daaf9a",
+  "source": "contract_planning.txt author_output_contract after shape/validation/allowed_enums/passthrough sanitizers",
+  "user_description": "Build an agent that prepares this AR remittance workbook for finance review. It should read the invoice/remittance data, use the FX and policy reference sheets where useful, calculate residual balances, convert open exposure into GBP, assign aging buckets as of 2026-05-01, identify invoices that need investigation, produce a clean row-level output, produce a separate exceptions file, summarise exposure by customer and aging bucket, and return validation evidence for the calculations and summaries.",
+  "schema_profile": {
+    "columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes"
+    ],
+    "upload_format": "xlsx",
+    "selected_sheet": "AR_Remittance",
+    "agent_input_path": "uploads/normalised_input.csv",
+    "normalized_input_path": "uploads/normalised_input.csv"
+  },
+  "contract": {
+    "build_mode": "llm_custom",
+    "workflow_type": "model_authored_finance_workflow",
+    "workflow_confidence": 0.9,
+    "input_file": "uploads/normalised_input.csv",
+    "input_format": "xlsx",
+    "selected_sheet": "AR_Remittance",
+    "normalized_input_path": "uploads/normalised_input.csv",
+    "row_level_output_file": "outputs/output.csv",
+    "summary_output_files": [
+      {
+        "path": "outputs/summary_by_customer_and_aging_bucket.csv",
+        "description": "Summary of exposure by customer and aging bucket",
+        "required_columns": [
+          "customer_id",
+          "aging_bucket",
+          "total_exposure"
+        ]
+      }
+    ],
+    "exception_output_files": [
+      {
+        "path": "outputs/investigation_required.csv",
+        "description": "Rows that need investigation",
+        "required_columns": [
+          "invoice_id",
+          "issue_flag",
+          "issue_reason"
+        ]
+      }
+    ],
+    "input_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes"
+    ],
+    "output_columns": [
+      "invoice_id",
+      "customer_id",
+      "customer_name",
+      "region",
+      "invoice_date",
+      "due_date",
+      "invoice_amount",
+      "invoice_currency",
+      "remittance_id",
+      "remittance_date",
+      "paid_amount",
+      "credit_note_amount",
+      "deduction_amount",
+      "deduction_reason",
+      "dispute_code",
+      "payment_reference",
+      "promised_pay_date",
+      "current_status",
+      "gl_account",
+      "notes",
+      "residual_balance",
+      "open_exposure_gbp",
+      "aging_bucket",
+      "issue_flag"
+    ],
+    "primary_row_key": "invoice_id",
+    "required_output_columns": [
+      "residual_balance",
+      "open_exposure_gbp",
+      "aging_bucket",
+      "issue_flag"
+    ],
+    "optional_output_columns": [],
+    "output_column_semantics": [
+      {
+        "name": "residual_balance",
+        "description": "Residual balance after payments, credits, and deductions",
+        "producer_kind": "calculation",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived residual balance for each output row using the contract's calculation or documented row-level logic.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      },
+      {
+        "name": "open_exposure_gbp",
+        "description": "Open exposure converted into GBP",
+        "producer_kind": "calculation",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit the derived open exposure in GBP for each output row using the contract's calculation or documented row-level logic.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the derived value is never left blank."
+      },
+      {
+        "name": "aging_bucket",
+        "description": "Aging bucket as of 2026-05-01",
+        "producer_kind": "classification",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Classify each row into an aging bucket based on the due date and current status.",
+        "fallback_value_semantics": "Use the workflow's explicit default or normalization rule so the classification is never left blank."
+      },
+      {
+        "name": "issue_flag",
+        "description": "Non-empty review flag for each output row",
+        "producer_kind": "exception_flag",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Emit a non-empty row-level review flag for every output row.",
+        "fallback_value_semantics": "Use an explicit default flag value even when no exception condition matches."
+      }
+    ],
+    "calculated_fields": [
+      {
+        "name": "residual_balance",
+        "description": "Residual balance after payments, credits, and deductions",
+        "formula": "invoice_amount - paid_amount - credit_note_amount - deduction_amount"
+      },
+      {
+        "name": "open_exposure_gbp",
+        "description": "Open exposure converted into GBP",
+        "formula": "residual_balance"
+      }
+    ],
+    "exception_rules": [],
+    "validation_checks": [
+      {
+        "check_id": "row_count",
+        "layer": "row_level",
+        "name": "Row count preserved",
+        "required": true,
+        "check_type": "row_count"
+      },
+      {
+        "check_id": "residual_balance_formula",
+        "layer": "business_rules",
+        "name": "Residual balance formula",
+        "required": true,
+        "check_type": "formula",
+        "formula": "residual_balance == invoice_amount - paid_amount - credit_note_amount - deduction_amount",
+        "output_column": "residual_balance",
+        "input_columns": [
+          "invoice_amount",
+          "paid_amount",
+          "credit_note_amount",
+          "deduction_amount"
+        ]
+      },
+      {
+        "check_id": "open_exposure_gbp_formula",
+        "layer": "business_rules",
+        "name": "Open exposure GBP formula",
+        "required": true,
+        "check_type": "formula",
+        "formula": "open_exposure_gbp == residual_balance",
+        "output_column": "open_exposure_gbp",
+        "input_columns": [
+          "residual_balance"
+        ],
+        "tolerance": 0.01
+      }
+    ],
+    "allowed_enums": {
+      "issue_flag": [
+        "no_issue",
+        "review_required"
+      ]
+    },
+    "summary_group_keys": [
+      "customer_id",
+      "aging_bucket"
+    ],
+    "summary_metrics": [
+      "total_exposure"
+    ],
+    "requested_deliverables": [
+      "outputs/output.csv",
+      {
+        "name": "summary_by_customer_and_aging_bucket",
+        "description": "Summary of exposure by customer and aging bucket",
+        "output_path": "outputs/summary_by_customer_and_aging_bucket.csv",
+        "required": true
+      },
+      {
+        "name": "investigation_required",
+        "description": "Rows that need investigation",
+        "output_path": "outputs/investigation_required.csv",
+        "required": true
+      }
+    ],
+    "missing_deliverables": [],
+    "skipped_checks": [],
+    "clarification_questions": [],
+    "unsupported_reasons": [],
+    "preserve_row_count": true
+  }
+}

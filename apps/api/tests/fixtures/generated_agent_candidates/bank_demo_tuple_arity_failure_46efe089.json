@@ -1,0 +1,16 @@
+{
+  "session_id": "46efe089-554b-4139-a53b-b5e9ed10757f",
+  "user_description": "Build an agent that categorises this bank transaction file for finance review. Preserve every original input row and add category, rule_matched, rule_used, confidence_score, and review_required.",
+  "expected_assigned_output_columns": [
+    "category",
+    "rule_matched",
+    "rule_used",
+    "confidence_score",
+    "review_required"
+  ],
+  "expected_unpack_count": 5,
+  "actual_helper_return_count": 4,
+  "execution_error": "Generated agent exited 1.\nstderr: ValueError: not enough values to unpack (expected 5, got 4)\n  File \"/Users/arhamshuaib/Desktop/Zalos/.workspaces/46efe089-554b-4139-a53b-b5e9ed10757f/generated/agent.py\", line 78, in process_transaction\n    category, rule_matched, rule_used, confidence_score, review_required = categorize_transaction(row['description'], row.get('counterparty', ''))",
+  "generated_agent_source": "def categorize_transaction(description, counterparty):\n    description = description.lower().strip()\n    counterparty = counterparty.lower().strip() if counterparty else \"\"\n    if \"stripe\" in description or \"payouts\" in description:\n        return \"Revenue\", \"Stripe payouts\", 0.95, False\n    return \"Other\", \"No clear rule matched\", 0.5, True\n\n\ndef process_transaction(row):\n    category, rule_matched, rule_used, confidence_score, review_required = categorize_transaction(row['description'], row.get('counterparty', ''))\n    return {\n        **row,\n        'category': category,\n        'rule_matched': rule_matched,\n        'rule_used': rule_used,\n        'confidence_score': confidence_score,\n        'review_required': review_required,\n    }\n",
+  "expected_fix": "If generated code unpacks five variables from a helper, every helper return branch must return five values in the same order. If rule_matched and rule_used are both required, return both explicitly."
+}

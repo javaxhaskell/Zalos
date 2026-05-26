@@ -1,0 +1,9 @@
+Build an agent that reviews this expense export for finance exceptions. It should flag rows that may need review, explain the reason, assign a severity, produce a clean row-level output, produce a separate exceptions file, and return validation evidence.
+
+Input columns include expense_id, employee_id, expense_date, category, amount, currency, merchant, approval_status, receipt_attached, policy_limit, and notes.
+
+Expected outputs are outputs/output.csv, outputs/exceptions.csv, reports/validation_report.md, generated/agent.py, generated/tests/test_agent.py, reports/model_authoring_summary.md, manifest.json, events.jsonl, SESSION_README.md, and archive.zip.
+
+Derived row-level fields should include exception_flag, exception_reason, severity, rule_used, and confidence.
+
+Use finance exception rules implied by the file: amount over policy limit, missing receipt on material expenses, approval status other than approved, and suspicious notes such as personal, duplicate, missing receipt, or cash advance.

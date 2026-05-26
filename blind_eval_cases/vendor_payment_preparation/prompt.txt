@@ -1,0 +1,1 @@
+Prepare vendor payments from this export. Flag invoices that are not ready to pay and produce a payment batch output with validation evidence.

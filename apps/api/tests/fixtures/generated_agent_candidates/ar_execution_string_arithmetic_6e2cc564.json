@@ -1,0 +1,14 @@
+{
+  "session_id": "6e2cc564-abe8-4fe3-b62b-13c09b3b68b2",
+  "source": "generated/agent.py calculate_residual_balance failure during execution",
+  "failure_detail_excerpt": "TypeError: unsupported operand type(s) for -: 'str' and 'str'",
+  "row": {
+    "invoice_id": "INV-00001",
+    "invoice_amount": "2213.72",
+    "paid_amount": "2384.51",
+    "credit_note_amount": "0",
+    "deduction_amount": "0",
+    "due_date": "2026-03-14 00:00:00"
+  },
+  "calculate_residual_balance_source": "def calculate_residual_balance(row):\n    return row['invoice_amount'] - row['paid_amount'] - row['credit_note_amount'] - row['deduction_amount']\n"
+}

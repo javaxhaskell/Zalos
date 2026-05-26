@@ -1,0 +1,1 @@
+Validate this general ledger journal export. Confirm debits equal credits for each journal and flag unbalanced entries.

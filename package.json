@@ -1,0 +1,22 @@
+{
+  "name": "agentforge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AgentForge — finance-team-facing app for authoring and repairing Python finance agents.",
+  "scripts": {
+    "dev": "concurrently --names api,web --prefix-colors blue,green \"make api\" \"make web\"",
+    "gen-schemas": "pnpm --filter @agentforge/shared-schemas gen",
+    "web": "pnpm --filter @agentforge/web",
+    "web:dev": "pnpm --filter @agentforge/web dev",
+    "web:build": "pnpm --filter @agentforge/web build",
+    "web:lint": "pnpm --filter @agentforge/web lint",
+    "web:typecheck": "pnpm --filter @agentforge/web typecheck",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "build": "pnpm -r --if-present build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

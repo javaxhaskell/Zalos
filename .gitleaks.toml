@@ -1,0 +1,21 @@
+# Minimal gitleaks config — extends defaults; adds known-safe placeholders.
+
+title = "AgentForge gitleaks config"
+
+[extend]
+useDefault = true
+
+[[allowlist]]
+description = "Known-safe placeholders in .env.example, README, and tests"
+paths = [
+  '''\.env\.example''',
+  '''README\.md''',
+  '''DEPLOYMENT\.md''',
+  '''apps/api/tests/.*''',
+  '''apps/web/.*''',
+]
+regexes = [
+  '''ANTHROPIC_API_KEY=''',
+  '''test-key-not-real''',
+  '''sk-placeholder''',
+]

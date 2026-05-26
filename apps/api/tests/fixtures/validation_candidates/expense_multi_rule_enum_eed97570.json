@@ -1,0 +1,157 @@
+{
+  "session_id": "eed97570-e992-4b67-bce6-01dbe8051e2a",
+  "workflow_type": "expense_exception_review",
+  "root_cause": "multi_rule_rule_used_enum_and_pytest_exception_corruption",
+  "contract_snippet": {
+    "workflow_type": "model_authored_finance_workflow",
+    "build_mode": "llm_custom",
+    "input_file": "uploads/expense_exception_review.csv",
+    "input_format": "csv",
+    "primary_row_key": "expense_id",
+    "preserve_row_count": true,
+    "row_level_output_file": "outputs/output.csv",
+    "exception_output_files": [
+      {
+        "path": "outputs/exceptions.csv",
+        "description": "Rows where policy exceptions were flagged",
+        "required_columns": ["expense_id", "exception_flag", "rule_used"],
+        "optional_columns": []
+      }
+    ],
+    "input_columns": ["expense_id", "amount", "policy_limit", "approval_status", "receipt_attached", "notes"],
+    "output_columns": [
+      "expense_id",
+      "amount",
+      "exception_flag",
+      "exception_reason",
+      "review_required",
+      "severity",
+      "rule_used"
+    ],
+    "required_output_columns": ["exception_flag", "review_required"],
+    "allowed_enums": {
+      "exception_flag": ["no_issue", "exception"],
+      "review_required": ["yes", "no"],
+      "severity": ["high", "medium", "low", "none"],
+      "rule_used": [
+        "amount_over_limit",
+        "missing_receipt",
+        "approval_not_final",
+        "suspicious_notes",
+        "none"
+      ]
+    },
+    "output_column_semantics": [
+      {
+        "name": "exception_flag",
+        "description": "Policy exception flag",
+        "producer_kind": "exception_flag",
+        "required": true,
+        "nullable": false,
+        "allow_empty_string": false,
+        "row_semantics": "Value 'exception' when any exception rule fires, else 'no_issue'.",
+        "fallback_value_semantics": "When no exception condition matches, default to 'no_issue'."
+      }
+    ],
+    "exception_rules": [
+      {
+        "name": "amount_over_limit",
+        "condition": "amount > policy_limit",
+        "output_column": "exception_flag",
+        "reason": "Expense amount exceeds policy limit.",
+        "severity": "high"
+      },
+      {
+        "name": "missing_receipt",
+        "condition": "receipt_attached != 'true'",
+        "output_column": "exception_flag",
+        "reason": "Receipt not attached where required.",
+        "severity": "high"
+      },
+      {
+        "name": "approval_not_final",
+        "condition": "approval_status != 'approved'",
+        "output_column": "exception_flag",
+        "reason": "Expense approval is not final.",
+        "severity": "medium"
+      },
+      {
+        "name": "suspicious_notes",
+        "condition": "notes contains suspicious keywords",
+        "output_column": "exception_flag",
+        "reason": "Notes contain suspicious indicators.",
+        "severity": "medium"
+      }
+    ],
+    "validation_checks": [],
+    "requested_deliverables": [
+      "outputs/output.csv",
+      {
+        "name": "exceptions_file",
+        "output_path": "outputs/exceptions.csv",
+        "required": true,
+        "source": "user_explicit"
+      },
+      {
+        "name": "validation_report",
+        "output_path": "reports/validation_report.md",
+        "required": true,
+        "source": "platform_canonical"
+      }
+    ]
+  },
+  "output_rows": [
+    {
+      "expense_id": "EXP-001",
+      "amount": "120.00",
+      "exception_flag": "exception",
+      "exception_reason": "Expense amount exceeds policy limit.",
+      "review_required": "yes",
+      "severity": "high",
+      "rule_used": "amount_over_limit"
+    },
+    {
+      "expense_id": "EXP-003",
+      "amount": "42.00",
+      "exception_flag": "no_issue",
+      "exception_reason": "",
+      "review_required": "no",
+      "severity": "none",
+      "rule_used": ""
+    },
+    {
+      "expense_id": "EXP-007",
+      "amount": "500.00",
+      "exception_flag": "exception",
+      "exception_reason": "Expense amount exceeds policy limit.; Receipt not attached where required.; Expense approval is not final.; Notes contain suspicious indicators.",
+      "review_required": "yes",
+      "severity": "high",
+      "rule_used": "amount_over_limit; missing_receipt; approval_not_final; suspicious_notes"
+    }
+  ],
+  "exception_rows": [
+    {
+      "expense_id": "EXP-001",
+      "exception_flag": "exception",
+      "rule_used": "amount_over_limit"
+    },
+    {
+      "expense_id": "EXP-007",
+      "exception_flag": "exception",
+      "rule_used": "amount_over_limit; missing_receipt; approval_not_final; suspicious_notes"
+    }
+  ],
+  "invalid_multi_rule_row": {
+    "expense_id": "EXP-BAD",
+    "amount": "10.00",
+    "exception_flag": "exception",
+    "exception_reason": "Bad rule combo",
+    "review_required": "yes",
+    "severity": "high",
+    "rule_used": "amount_over_limit; invented_rule"
+  },
+  "expected_after_fix": {
+    "allowed_enum_evidence": "enum checks passed",
+    "exception_evidence": "2 exception rows match flagged output rows"
+  }
+}
